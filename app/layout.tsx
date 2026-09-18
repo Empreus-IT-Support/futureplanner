@@ -7,6 +7,7 @@ import MotionProvider from '@/components/MotionProvider'
 import ScrollUI from '@/components/ScrollUI'
 import SiteHeader from '@/components/SiteHeader'
 import { site } from '@/data/site'
+import { indexable } from './robots'
 
 import './globals.css'
 
@@ -50,6 +51,13 @@ export const metadata: Metadata = {
     'Future Planner provides personal financial advice from offices on the Gold Coast, in ' +
     'Canberra and Mount Isa, and by video across Australia.',
   alternates: { canonical: '/' },
+  /**
+   * robots.txt asks crawlers not to fetch; this tells any crawler that reaches
+   * a page anyway not to index it. Both are off until SITE_INDEXABLE is set.
+   */
+  robots: indexable
+    ? { index: true, follow: true }
+    : { index: false, follow: false, nocache: true },
   openGraph: {
     type: 'website',
     locale: 'en_AU',

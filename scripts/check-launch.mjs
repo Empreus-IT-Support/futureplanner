@@ -54,7 +54,17 @@ else todo('RESEND_API_KEY not set — the form returns 503 and tells people to e
 console.log('  [manual]  SPF, DKIM and DMARC on futureplanner.au')
 console.log('  [manual]  delivery tested to a Gmail and an Outlook address')
 
-// 5. Sign-off.
+// 5. Search indexing.
+console.log("\nSearch indexing");
+if (process.env.SITE_INDEXABLE === "true") {
+  ok("SITE_INDEXABLE=true — the site is crawlable and indexable");
+} else {
+  todo("SITE_INDEXABLE is not \"true\" — robots.txt disallows all, pages are noindex");
+  console.log("      Deliberate. Turn this on at launch, not before: a name or photo");
+  console.log("      picked up by a crawler outlives the page it came from.");
+}
+
+// 6. Sign-off.
 console.log('\nSign-off')
 console.log('  [manual]  AVALONFS has approved the finished site')
 console.log('  [manual]  HTTPS enforced, HSTS on, admin access behind MFA')

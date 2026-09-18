@@ -258,6 +258,25 @@ approve the change if the disclosure is the one that is wrong.
 
 ---
 
+## Deploying to Vercel
+
+- **Set the environment variables** from `.env.example`: `RESEND_API_KEY`,
+  `ENQUIRY_TO`, `ENQUIRY_FROM`. Leave `NEXT_PUBLIC_PREVIEW_TEAM` unset — a
+  production build ignores it regardless.
+- **Leave `SITE_INDEXABLE` off until launch.** Without it the site serves
+  `Disallow: /` and a noindex meta tag. Turn it on only once AVALONFS has
+  approved and the consents are in.
+- **The enquiry rate limit is in-process.** On serverless each invocation can be
+  a fresh instance, so the per-IP limit is far weaker in practice than it looks
+  locally. The honeypot and the time-on-page check are unaffected. If the form
+  attracts real abuse, move the limiter to a shared store (Vercel KV or
+  Upstash) rather than relying on it as it stands.
+- **Point the domain at Vercel and let it issue the certificate.** HSTS is
+  already set in `next.config.ts` and assumes HTTPS is enforced at the edge.
+- The three PDFs are still missing, so the Financial Services Guide, Adviser
+  Profile and Privacy Policy links will 404 on a live deploy. Worth fixing
+  before the URL goes anywhere near a client.
+
 ## Launch checklist
 
 - [ ] Three PDFs in `public/docs/` and links tested
@@ -268,6 +287,7 @@ approve the change if the disclosure is the one that is wrong.
 - [ ] All six consents returned; `consent: true` set; headshots added
 - [ ] Adviser name discrepancy resolved
 - [ ] Body typeface change (Arial to Plus Jakarta Sans) signed off
+- [ ] `SITE_INDEXABLE=true` set in Vercel (off until AVALONFS approves)
 - [ ] HTTPS enforced, HSTS on, admin access behind MFA
 - [ ] `npm run check` passes
 - [ ] Contrast and keyboard navigation checked

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Future Planner">
+  <rect width="64" height="64" rx="13" fill="#0C1A2E"/>
+  <!-- A rising line, drawn rather than set in type: an SVG favicon is rendered
+       with whatever font the browser picks, so a lettermark would be
+       inconsistent across platforms. -->
+  <path d="M15 43 L27 31 L35 38 L49 21" fill="none" stroke="#C8A43E"
+        stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M40 21 H49 V30" fill="none" stroke="#C8A43E"
+        stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
