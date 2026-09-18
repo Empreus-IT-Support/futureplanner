@@ -20,7 +20,7 @@ export default function HomePage() {
       <Hero />
       <LicenseeStrip />
 
-      <section className="section section--dark">
+      <section className="section">
         <div className="wrap">
           <Stats />
         </div>
@@ -116,11 +116,15 @@ export default function HomePage() {
 
       <section className="section" id="team">
         <div className="wrap">
-          <div className="section-head section-head--split" data-reveal>
+          {/* The handover copy here read "Six of us across three offices, plus
+              remote administration support." Dropped: the stats band already
+              says 6 in the team and 3 offices, so in the split head it landed
+              as an orphan line repeating a figure the reader just passed. One
+              line to restore if the client wants it back. */}
+          <div className="section-head" data-reveal>
             <p className="eyebrow">The team</p>
             <h2>Meet the team</h2>
             <hr className="rule-gold" />
-            <p>Six of us across three offices, plus remote administration support.</p>
           </div>
 
           <TeamGrid />

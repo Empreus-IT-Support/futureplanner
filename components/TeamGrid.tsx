@@ -20,9 +20,7 @@ export default function TeamGrid() {
         <div>
           <h3>Profiles are published as consent is returned</h3>
           <p>
-            Six people work across the three offices — two advisers, a practice manager, a client
-            liaison officer and two administrators. Each profile goes up once that person&rsquo;s
-            written consent is back.
+            Each person&rsquo;s profile and photograph goes up once their written consent is back.
           </p>
         </div>
       </div>

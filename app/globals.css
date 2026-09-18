@@ -358,25 +358,7 @@ strong,b{font-weight:700}
 .hero{position:relative;padding-block:clamp(60px,9vw,116px);overflow:hidden}
 
 /* Two slow-drifting gold/blue blooms behind the copy. Purely decorative. */
-.hero-aura{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
-.hero-aura span{
-  position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;
-}
-.hero-aura span:nth-child(1){
-  width:46vw;height:46vw;left:-12vw;top:-18vw;background:var(--gold-22);
-}
-.hero-aura span:nth-child(2){
-  width:38vw;height:38vw;right:-8vw;bottom:-22vw;background:var(--blue-08);
-}
-@media (prefers-reduced-motion: no-preference){
-  .hero-aura span:nth-child(1){animation:drift 26s var(--ease-in-out) infinite}
-  .hero-aura span:nth-child(2){animation:drift-alt 32s var(--ease-in-out) infinite}
-}
 
-.hero-grid{
-  display:grid;grid-template-columns:1.08fr .92fr;
-  gap:clamp(28px,5vw,60px);align-items:stretch;
-}
 /* Sized in px, not ch: the headline is Playfair but inherits this from the
    body font, so a ch value re-flows the h1 whenever the body face changes. */
 .hero-copy{align-self:center;max-width:min(100%, 560px)}
@@ -390,7 +372,6 @@ strong,b{font-weight:700}
 /* Scoped to the copy column. A bare `.hero p` also caught the overlay
    panel title, which inherited its 30px bottom margin. */
 .hero-copy > p{color:var(--slate);font-size:clamp(15px,1.7vw,18px);margin:22px 0 30px}
-.hero-panel .title{margin:0}
 .hero-actions{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
 
 /* Staggered entrance for the hero, which is above the fold and so animates on
@@ -407,19 +388,8 @@ strong,b{font-weight:700}
   html.js-motion .hero h1 em.is-drawn::after{transform:scaleX(1)}
 }
 
-.hero-figure{
-  position:relative;overflow:hidden;border-radius:12px;background:var(--navy);
-  min-height:min(560px, 62vh);box-shadow:var(--shadow-lg);
-}
-.hero-figure img{
-  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  object-position:50% 62%;
-}
 /* Slow drift across the photograph. Decorative, and it stops under reduced
    motion along with everything else. */
-@media (prefers-reduced-motion: no-preference){
-  .hero-figure img{animation:ken-burns 34s var(--ease-in-out) infinite alternate}
-}
 @keyframes ken-burns{
   from{transform:scale(1)}
   to{transform:scale(1.07)}
@@ -427,25 +397,10 @@ strong,b{font-weight:700}
 
 /* Scrim. Light across the picture so the photograph still reads, deepening
    into the foot of the frame where the overlay panel sits. */
-.hero-figure::after{
-  content:'';position:absolute;inset:0;z-index:2;
-  background:
-    radial-gradient(110% 80% at 18% 10%, rgba(200,164,62,0.20), transparent 62%),
-    linear-gradient(175deg, rgba(12,26,46,0.18) 8%, rgba(12,26,46,0.58) 70%, var(--navy-88));
-}
 
 /* Fine gold grid, drawn only when the image slot is EMPTY so the fallback is a
    designed surface rather than a blank navy rectangle. Over a real photograph
    it would just be noise. */
-.hero-figure--empty::before{
-  content:'';position:absolute;inset:0;z-index:1;opacity:.75;
-  background-image:
-    linear-gradient(var(--gold-10) 1px, transparent 1px),
-    linear-gradient(90deg, var(--gold-10) 1px, transparent 1px);
-  background-size:46px 46px;
-  mask-image:radial-gradient(120% 100% at 30% 20%, #000 20%, transparent 75%);
-  -webkit-mask-image:radial-gradient(120% 100% at 30% 20%, #000 20%, transparent 75%);
-}
 
 /* Scroll cue at the foot of the hero. */
 .scroll-cue{
@@ -883,8 +838,6 @@ strong,b{font-weight:700}
 }
 
 @media (max-width:900px){
-  .hero-grid{grid-template-columns:1fr}
-  .hero-figure{min-height:280px;order:-1}
   .about-grid{grid-template-columns:1fr}
   .about-figure{position:static;aspect-ratio:16/10}
   .card-grid,.doc-list,.office-grid{grid-template-columns:1fr}
@@ -952,7 +905,7 @@ strong,b{font-weight:700}
    PRINT
    ========================================================================== */
 @media print{
-  .site-header,.hero-figure,.hero-aura,.nav-toggle,.scroll-progress,
+  .site-header,.hero-media,.nav-toggle,.scroll-progress,
   .to-top,.scroll-cue{display:none !important}
   body{font-size:12pt;background:#fff}
   .section{border-bottom:0;padding-block:18pt}
@@ -973,28 +926,9 @@ strong,b{font-weight:700}
    something to say; once a photograph is dropped in it reads as a caption over
    the scrim. Content only — the offices, which are stated elsewhere too.
    ========================================================================== */
-.hero-panel{
-  position:absolute;left:0;right:0;bottom:0;z-index:4;
-  padding:26px clamp(20px,3vw,30px);
-  display:flex;flex-direction:column;gap:14px;
-  background:linear-gradient(0deg, rgba(12,26,46,0.72), transparent);
-}
-.hero-panel .title{
-  font-size:10px;letter-spacing:3px;text-transform:uppercase;
-  color:var(--gold-lt);font-weight:bold;
-}
-.hero-panel ul{list-style:none;display:flex;flex-wrap:wrap;gap:10px 22px}
-.hero-panel li{
-  display:flex;align-items:center;gap:9px;
-  font-size:14px;color:rgba(255,255,255,0.92);letter-spacing:.2px;
-}
-.hero-panel li::before{
-  content:'';width:6px;height:6px;border-radius:50%;background:var(--gold);flex:none;
-}
 @media (prefers-reduced-motion: no-preference){
   /* The dot pops as its office lands. No fill-mode: if the animation never
      runs the dot is simply there, rather than invisible. */
-  html.js-motion .hero-panel li.is-visible::before{animation:pop .5s var(--ease-out)}
 }
 @keyframes pop{
   0%{transform:scale(.3);opacity:.3}
@@ -1002,11 +936,6 @@ strong,b{font-weight:700}
   100%{transform:scale(1);opacity:1}
 }
 
-@media (max-width:900px){
-  .hero-panel{padding:20px}
-  .hero-panel ul{gap:8px 16px}
-  .hero-panel li{font-size:13px}
-}
 
 /* Office opening hours line. */
 .office-hours{
@@ -1179,12 +1108,6 @@ strong,b{font-weight:700}
    content edge to the viewport edge, so it works at any width. */
 @media (min-width:900px){
   .hero{padding-block:clamp(56px,6vw,92px)}
-  .hero-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.02fr);align-items:center}
-  .hero-figure{
-    margin-right:calc(-1 * (max(0px, (100vw - var(--shell)) / 2) + var(--gutter)));
-    border-radius:14px 0 0 14px;
-    min-height:min(620px, 70vh);
-  }
 }
 
 /* The scroll cue was floating in dead space under the buttons. */
@@ -1278,3 +1201,96 @@ strong,b{font-weight:700}
 .field label{font-size:12.5px;letter-spacing:1.2px}
 .collection-notice{font-size:14px;line-height:1.6}
 .enquiry-aside dd{font-size:15.5px}
+
+/* ==========================================================================
+   HERO — full bleed
+
+   Replaces the split hero. The photograph is a 3:2 landscape aerial; boxing it
+   into a portrait column cropped away the sky, the beach and the ocean, which
+   is most of what made it worth using. Full width keeps the composition.
+   These rules come after the originals and deliberately override them.
+   ========================================================================== */
+.hero{
+  position:relative;isolation:isolate;overflow:hidden;
+  display:flex;align-items:stretch;
+  min-height:clamp(560px, 82vh, 820px);
+  padding-block:0;
+  background:var(--navy);
+}
+
+.hero-media{position:absolute;inset:0;z-index:-2}
+.hero-media img{width:100%;height:100%;object-fit:cover;object-position:50% 52%}
+@media (prefers-reduced-motion: no-preference){
+  .hero-media img{animation:ken-burns 40s var(--ease-in-out) infinite alternate}
+}
+
+/* Scrim. Heaviest at the left where the copy sits, lifting to the right so the
+   skyline still reads, with a foot wash so the office row stays legible. */
+.hero::before{
+  content:'';position:absolute;inset:0;z-index:-1;
+  background:
+    linear-gradient(100deg, rgba(12,26,46,0.88) 0%, rgba(12,26,46,0.70) 38%, rgba(12,26,46,0.30) 72%, rgba(12,26,46,0.16) 100%),
+    linear-gradient(0deg, rgba(12,26,46,0.72) 0%, transparent 34%);
+}
+/* Gold cast, tying the photograph to the palette. */
+.hero::after{
+  content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(80% 60% at 78% 18%, var(--gold-10), transparent 70%);
+}
+
+/* Fallback when no photograph is set. */
+.hero--empty .hero::before{background:linear-gradient(140deg, rgba(12,26,46,0.6), var(--navy))}
+
+.hero-inner{
+  display:flex;flex-direction:column;justify-content:flex-end;gap:clamp(34px,6vh,64px);
+  width:100%;padding-block:clamp(88px,11vh,124px) clamp(30px,4vh,44px);
+}
+
+.hero .hero-copy{max-width:min(100%, 720px);align-self:auto}
+.hero h1{color:var(--white);max-width:min(100%, 680px)}
+.hero h1 em{color:var(--gold-lt)}
+.hero h1 em::after{background:var(--gold-40)}
+.hero-copy > p{
+  color:rgba(255,255,255,0.86);max-width:52ch;
+  font-size:clamp(16px,1.8vw,20px);line-height:1.6;margin:24px 0 34px;
+}
+.hero-actions{gap:14px}
+
+/* Buttons on the photograph need their own treatment — the navy fill would
+   disappear into the scrim. */
+.btn--gold{background:var(--gold);color:var(--navy);box-shadow:var(--shadow-lg)}
+.btn--gold:hover{background:var(--gold-lt);color:var(--navy)}
+.btn--ghost{background:transparent;color:var(--white);border-color:rgba(255,255,255,0.45)}
+.btn--ghost:hover{background:var(--white);color:var(--navy);border-color:var(--white)}
+
+/* Foot row: the three offices, and the scroll cue. */
+.hero-foot{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  gap:24px;flex-wrap:wrap;
+  padding-top:clamp(20px,3vh,30px);border-top:1px solid rgba(255,255,255,0.16);
+}
+.hero-offices{list-style:none;display:flex;flex-wrap:wrap;align-items:center;gap:10px 26px}
+.hero-offices li{
+  display:flex;align-items:center;gap:10px;
+  font-size:15px;font-weight:600;color:var(--white);letter-spacing:-0.1px;
+}
+.hero-offices li::before{
+  content:'';width:6px;height:6px;border-radius:50%;background:var(--gold);flex:none;
+}
+.hero-offices__note{
+  font-weight:420 !important;color:rgba(255,255,255,0.62) !important;font-size:14px !important;
+}
+.hero-offices__note::before{display:none}
+
+.hero .scroll-cue{margin-top:0;color:rgba(255,255,255,0.62)}
+.hero .scroll-cue:hover{color:var(--white)}
+
+@media (max-width:640px){
+  .hero{min-height:clamp(520px, 76vh, 680px)}
+  .hero .hero-copy{max-width:none}
+  .hero h1{max-width:none}
+  .hero-foot{flex-direction:column;align-items:flex-start;gap:18px}
+  .hero-offices{gap:8px 18px}
+  .hero-offices li{font-size:14px}
+  .hero-actions .btn{flex:1 1 auto;justify-content:center}
+}
