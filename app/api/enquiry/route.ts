@@ -24,8 +24,16 @@ import { enquiryOffices, fsgUrl, site } from '@/data/site'
 export const runtime = 'nodejs'
 
 const TO = process.env.ENQUIRY_TO ?? site.email
-const FROM = process.env.ENQUIRY_FROM ?? 'Future Planner website <noreply@futureplanner.au>'
-const RESEND_KEY = process.env.RESEND_API_KEY
+/**
+ * Atlas registers one sending address per domain and rejects any other, so
+ * this must match what the key was minted for. Accepts either a bare address
+ * or "Name <addr>" — Atlas wants the bare address, so it is extracted below.
+ */
+const FROM = process.env.ENQUIRY_FROM ?? 'info@futureplanner.au'
+const ATLAS_KEY = process.env.ATLAS_SENDING_KEY
+
+/** "Future Planner <info@futureplanner.au>" -> "info@futureplanner.au" */
+const bareAddress = (value: string) => value.match(/<([^>]+)>/)?.[1]?.trim() ?? value.trim()
 
 /** Bots submit near-instantly. People take longer than this to fill a form. */
 const MIN_ELAPSED_MS = 3_000
@@ -70,27 +78,33 @@ function logFailure(stage: string, detail?: string) {
   console.error(`[enquiry] ${stage}${detail ? `: ${detail}` : ''}`)
 }
 
-function escapeHtml(value: string) {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-}
-
 /** Strip CR/LF so user input cannot inject extra mail headers. */
 function headerSafe(value: string) {
   return value.replace(/[\r\n]+/g, ' ').trim()
 }
 
-async function send(payload: Record<string, unknown>) {
-  const res = await fetch('https://api.resend.com/emails', {
+/**
+ * Send through Atlas.
+ *
+ * Atlas holds the provider credentials; the key here only works for one domain
+ * and only for the recipients allowlisted against it, so a leaked key cannot
+ * be used to send anywhere else. That allowlist is why `sendAutoReply` below
+ * is best-effort: the enquirer's address cannot be known in advance, so it may
+ * legitimately be refused.
+ */
+async function send(payload: {
+  to: string[]
+  subject: string
+  text: string
+  reply_to?: string
+}) {
+  const res = await fetch('https://atlascontrol.io/api/email/send', {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${RESEND_KEY}`,
+      Authorization: `Bearer ${ATLAS_KEY}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({ from: bareAddress(FROM), ...payload }),
   })
 
   if (!res.ok) {
@@ -187,68 +201,74 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'That message is too long to send.' }, { status: 400 })
   }
 
-  if (!RESEND_KEY) {
-    logFailure('not configured', 'RESEND_API_KEY is missing')
+  if (!ATLAS_KEY) {
+    logFailure('not configured', 'ATLAS_SENDING_KEY is missing')
     return NextResponse.json(
       { error: 'The enquiry form is not configured yet. Please email or call us instead.' },
       { status: 503 },
     )
   }
 
-  const safe = {
-    name: escapeHtml(name),
-    email: escapeHtml(email),
-    phone: escapeHtml(phone),
-    office: escapeHtml(office),
-    message: escapeHtml(message).replace(/\n/g, '<br>'),
-  }
+  const lines = [
+    `Name: ${name}`,
+    `Email: ${email}`,
+    ...(phone ? [`Phone: ${phone}`] : []),
+    `Preferred office: ${office}`,
+    '',
+    'Message:',
+    message,
+  ]
 
   try {
-    // 1. The enquiry itself, to the office inbox.
+    // 1. The enquiry itself, to the office inbox. This one is the point of the
+    //    form: if it fails, the submission has genuinely failed.
     await send({
-      from: FROM,
       to: [TO],
       reply_to: headerSafe(email),
       subject: `Website enquiry — ${headerSafe(office)}`,
-      html: `
-        <p><strong>Name:</strong> ${safe.name}</p>
-        <p><strong>Email:</strong> ${safe.email}</p>
-        ${safe.phone ? `<p><strong>Phone:</strong> ${safe.phone}</p>` : ''}
-        <p><strong>Preferred office:</strong> ${safe.office}</p>
-        <p><strong>Message:</strong><br>${safe.message}</p>
-      `,
+      text: lines.join('\n'),
     })
-
-    // 2. Auto-reply. Must carry the FSG link and the general advice warning.
-    await send({
-      from: FROM,
-      to: [headerSafe(email)],
-      reply_to: TO,
-      subject: 'We have received your enquiry — Future Planner',
-      html: `
-        <p>Hello ${safe.name},</p>
-        <p>Thanks for getting in touch. We have received your enquiry and someone will
-           respond shortly.</p>
-        <p>Our Financial Services Guide sets out what AVALONFS is licensed to provide, how
-           advisers are paid and how complaints are handled. You can read it here:
-           <a href="${fsgUrl}">${fsgUrl}</a></p>
-        <p style="font-size:14px;color:#3C5064">
-          <strong>General advice warning.</strong> ${escapeHtml(generalAdviceWarning)}
-        </p>
-        <p style="font-size:13px;color:#3C5064">
-          ${site.legalName} · <a href="tel:${site.phoneHref}">${site.phone}</a> ·
-          <a href="mailto:${site.email}">${site.email}</a>
-        </p>
-      `,
-    })
-
-    return NextResponse.json({ ok: true })
   } catch (err) {
-    // Never log the enquiry body. Stage and provider status only.
-    logFailure('send failed', err instanceof Error ? err.message : undefined)
+    logFailure('enquiry send failed', err instanceof Error ? err.message : undefined)
     return NextResponse.json(
       { error: 'We could not send your enquiry just now. Please email or call us instead.' },
       { status: 502 },
     )
   }
+
+  // 2. Auto-reply, carrying the FSG link and the general advice warning.
+  //
+  //    Best-effort on purpose. The Atlas key is allowlisted to a fixed set of
+  //    recipients, and an enquirer's address cannot be on that list in
+  //    advance, so this send may be refused by design. When it is, the enquiry
+  //    has still reached the office — telling the visitor their message failed
+  //    would be worse than wrong, it would make them send it again.
+  //
+  //    The auto-reply is a handover requirement, so a persistent failure here
+  //    needs fixing rather than tolerating: it shows up in the logs as its own
+  //    stage. See the README.
+  try {
+    await send({
+      to: [headerSafe(email)],
+      reply_to: TO,
+      subject: 'We have received your enquiry — Future Planner',
+      text: [
+        `Hello ${name},`,
+        '',
+        'Thanks for getting in touch. We have received your enquiry and someone will respond shortly.',
+        '',
+        'Our Financial Services Guide sets out what AVALONFS is licensed to provide, how advisers',
+        'are paid, and how complaints are handled. You can read it here:',
+        fsgUrl,
+        '',
+        `General advice warning. ${generalAdviceWarning}`,
+        '',
+        `${site.legalName} · ${site.phone} · ${site.email}`,
+      ].join('\n'),
+    })
+  } catch (err) {
+    logFailure('auto-reply send failed', err instanceof Error ? err.message : undefined)
+  }
+
+  return NextResponse.json({ ok: true })
 }

@@ -60,26 +60,35 @@ When a URL is retired, add it to `legacyDocuments` in `next.config.ts` rather
 than letting it 404.
 
 ### 2. Configure the enquiry form
-The handler is at `app/api/enquiry/route.ts`. Copy `.env.example` to
-`.env.local` and set the values. It already does what the brief required: POSTs
-over TLS to a handler we control, delivers to `admin@futureplanner.au`, sets
-Reply-To to the sender, uses the subject `Website enquiry — [office]`, sends an
-auto-reply carrying the FSG link and the general advice warning, and logs the
-fact of a failure but never the contents of a submission.
+The handler is at `app/api/enquiry/route.ts` and sends through **Atlas Control**
+(`POST https://atlascontrol.io/api/email/send`, bearer auth). Copy
+`.env.example` to `.env.local` and set the values; in Vercel they go in the
+project environment.
 
-Spam protection is a honeypot field, a minimum time-on-page, and a per-IP rate
-limit. None of it involves a third party, so nothing here changes what the
-privacy position needs to cover.
+Atlas holds the provider credentials. The key works for one sending domain and
+only for the recipients allowlisted against it, so a leaked key cannot send
+anywhere else. Mint one at Client → Documentation → API → Atlas sending key.
+**It is shown once and cannot be retrieved.**
 
-Two things are still operations work, not code:
+Two consequences worth knowing:
 
-- **Set up SPF, DKIM and DMARC on futureplanner.au before launch.** Form mail
-  sent without authentication lands in spam. Test delivery to a Gmail *and* an
-  Outlook address.
-- The rate limit is in-process. If this is ever deployed across more than one
-  instance, move it to a shared store or the limit silently weakens.
+- `ENQUIRY_FROM` must be the address the key was registered for. Atlas rejects
+  any other address on the domain.
+- **The auto-reply to the enquirer is best-effort.** Their address cannot be on
+  the allowlist in advance, so Atlas may refuse it by design. The handler sends
+  the office notification first and treats that as the real outcome; if the
+  auto-reply is refused the enquiry has still arrived, and telling the visitor
+  it failed would only make them send it again. A refused auto-reply is logged
+  as its own stage.
 
-Until `RESEND_API_KEY` is set the form returns a clear message telling people
+  The auto-reply is a handover requirement — it carries the FSG link and the
+  general advice warning — so if it is being refused persistently that needs
+  resolving with Atlas rather than tolerating.
+
+Spam protection is a honeypot, a minimum time-on-page, and a per-IP rate limit.
+None of it involves a third party.
+
+Until `ATLAS_SENDING_KEY` is set the form returns a clear message telling people
 to email or call instead, rather than failing silently.
 
 ### 3. Replace the interim hero photograph — done, but still interim
@@ -352,7 +361,7 @@ They cover the three things that would fail *quietly*:
 
 ## Deploying to Vercel
 
-- **Set the environment variables** from `.env.example`: `RESEND_API_KEY`,
+- **Set the environment variables** from `.env.example`: `ATLAS_SENDING_KEY`,
   `ENQUIRY_TO`, `ENQUIRY_FROM`. Leave `NEXT_PUBLIC_PREVIEW_TEAM` unset — a
   production build ignores it regardless.
 - **Leave `SITE_INDEXABLE` off until launch.** Without it the site serves
@@ -372,7 +381,8 @@ They cover the three things that would fail *quietly*:
 ## Launch checklist
 
 - [ ] Three PDFs in `public/docs/` and links tested
-- [ ] `RESEND_API_KEY` set, delivering to admin@futureplanner.au
+- [ ] `ATLAS_SENDING_KEY` set, delivering to admin@futureplanner.au
+- [ ] Auto-reply reaching the enquirer (not refused by the Atlas allowlist)
 - [ ] SPF / DKIM / DMARC configured and delivery tested
 - [ ] Auto-reply working, with FSG link included
 - [x] Hero image hosted locally and `heroImage` set (interim photo — client photography still to come)
