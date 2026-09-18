@@ -36,6 +36,7 @@ npm run dev          # http://localhost:3000
 | `npm run check:words` | Fails if a restricted word appears in copy or a filename |
 | `npm run check:launch` | Reports which launch gates are still open |
 | `npm run check:deployable` | Fails an indexable build if a disclosure PDF is missing |
+| `npm run test` | Consent gate, enquiry endpoint and prescribed wording |
 | `npm run check` | Restricted words, lint and types together |
 
 ---
@@ -292,6 +293,30 @@ approve the change if the disclosure is the one that is wrong.
 
 ---
 
+## Tests
+
+`npm run test` (vitest). 31 tests, and they run before every build — a broken
+consent gate cannot be deployed.
+
+They cover the three things that would fail *quietly*:
+
+- **The consent gate.** Nothing throws if a refactor reads the raw `team` array
+  instead of `publishedTeam()`; the site would simply start publishing six real
+  people's names, email addresses and ASIC adviser numbers without consent. The
+  tests assert on rendered markup from both `TeamGrid` and `StructuredData`, so
+  they fail whichever route the mistake takes. Verified by deliberately
+  breaking the gate and confirming the suite goes red.
+- **The enquiry endpoint.** Every rejection path, plus two things worth
+  guarding: that a submission body never reaches the logs, and that the
+  honeypot and timing checks accept silently rather than telling a bot why it
+  was refused.
+- **The prescribed wording.** The Lack of Independence Statement, the general
+  advice warning and the footer disclosure are asserted word for word, and
+  asserted to carry no reveal animation. This is exactly the text that gets
+  "tidied" during an unrelated copy pass; the tests make changing it a
+  conscious decision with a sign-off attached rather than a diff nobody
+  notices.
+
 ## Deploying to Vercel
 
 - **Set the environment variables** from `.env.example`: `RESEND_API_KEY`,
@@ -323,6 +348,6 @@ approve the change if the disclosure is the one that is wrong.
 - [ ] Body typeface change (Arial to Plus Jakarta Sans) signed off
 - [ ] `SITE_INDEXABLE=true` set in Vercel (off until AVALONFS approves)
 - [ ] HTTPS enforced, HSTS on, admin access behind MFA
-- [ ] `npm run check` passes
+- [ ] `npm run check` passes (words, lint, types, tests)
 - [ ] Contrast and keyboard navigation checked
 - [ ] **AVALONFS has approved the finished site**

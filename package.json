@@ -9,9 +9,11 @@
     "lint": "eslint",
     "check:words": "node scripts/check-restricted-words.mjs",
     "check:launch": "node scripts/check-launch.mjs",
-    "check": "npm run check:words && npm run lint && tsc --noEmit",
-    "prebuild": "node scripts/check-deployable.mjs",
-    "check:deployable": "node scripts/check-deployable.mjs"
+    "check": "npm run check:words && npm run lint && tsc --noEmit && npm run test",
+    "prebuild": "node scripts/check-deployable.mjs && vitest run --silent",
+    "check:deployable": "node scripts/check-deployable.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "next": "16.3.5",
@@ -19,11 +21,12 @@
     "react-dom": "19.2.8"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@types/node": "^24.13.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.5",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^5.0.1"
   }
 }

@@ -1,4 +1,3 @@
-import { footerDisclosure } from '@/data/compliance'
 import { licensee, offices, site } from '@/data/site'
 import { publishedTeam } from '@/data/team'
 
@@ -19,6 +18,13 @@ import { publishedTeam } from '@/data/team'
  *
  * No aggregateRating, no review and no priceRange: we have no basis for any of
  * them, and inventing them would be a fabricated claim.
+ *
+ * The footer disclosure is deliberately NOT mirrored here. It names two
+ * advisers, and while that is prescribed wording that appears visibly on every
+ * page, copying it into machine-readable markup buys nothing and puts person
+ * names into structured data. Keeping this block free of names entirely is
+ * what lets the consent gate be asserted as a simple property in
+ * tests/consent-gate.test.tsx.
  */
 export default function StructuredData() {
   const people = publishedTeam()
@@ -54,7 +60,6 @@ export default function StructuredData() {
       name: 'AVALONFS Pty Ltd',
       identifier: 'AFSL 437518',
     },
-    disambiguatingDescription: footerDisclosure.entity,
     location: locations,
     // Empty until written consent is recorded. See data/team.ts.
     ...(people.length > 0
@@ -76,8 +81,6 @@ export default function StructuredData() {
       areaServed: 'AU',
       availableLanguage: 'en-AU',
     },
-    // Complaints are handled by the licensee, not by Future Planner.
-    slogan: undefined,
     knowsAbout: [
       'Retirement and superannuation advice',
       'Investment advice',
