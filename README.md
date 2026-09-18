@@ -293,6 +293,39 @@ approve the change if the disclosure is the one that is wrong.
 
 ---
 
+## Accessibility
+
+Audited with axe-core against every route, at desktop and mobile widths, and
+with the enquiry form in its error state. All four routes report zero
+violations. What that found and what was changed:
+
+- **Colour contrast.** The brand gold is 2.38:1 on white and the brand grey
+  3.54:1, where AA wants 4.5:1 for small text. Both are fine as rules, icons,
+  dots and borders, and gold on navy clears 7.35:1. So the brand tokens are
+  unchanged and two darkened variants — `--gold-text` and `--grey-text` — are
+  used only where the colour carries text. The footer copyright went from
+  3.79:1 to 6.01:1.
+- **Focus indicator.** The ring was brand gold at 2.38:1 against white; WCAG
+  2.2 asks 3:1 for focus indicators. Light surfaces now use `--gold-text`
+  (4.91:1) and dark surfaces `--gold-lt` (11:1).
+- **Heading order.** `/services`, `/contact` and `/complaints` each jumped from
+  h1 straight to h3. Card, office and step headings are h2 on those pages,
+  where they are top-level content, and stay h3 on the home page where a
+  section h2 sits above them. `ServiceCards` takes a `headingLevel` prop.
+- **Landmarks.** The general advice warning sat outside main, header and
+  footer, so it belonged to no region — awkward for anyone navigating by
+  landmark, on a block they are meant to be able to find. It is an `<aside>`
+  with an accessible name now.
+
+Keyboard navigation was checked with real Tab presses rather than programmatic
+focus, which does not trigger `:focus-visible`. Skip link comes first, focus
+order follows the visual order, and the back-to-top control is removed from the
+tab order while hidden.
+
+Not covered: screen reader testing with an actual screen reader, and colour
+contrast of the photograph behind the hero copy, which varies with the image.
+Worth a manual pass before launch.
+
 ## Tests
 
 `npm run test` (vitest). 31 tests, and they run before every build — a broken
@@ -349,5 +382,6 @@ They cover the three things that would fail *quietly*:
 - [ ] `SITE_INDEXABLE=true` set in Vercel (off until AVALONFS approves)
 - [ ] HTTPS enforced, HSTS on, admin access behind MFA
 - [ ] `npm run check` passes (words, lint, types, tests)
-- [ ] Contrast and keyboard navigation checked
+- [x] Contrast and keyboard navigation checked (axe-core, zero violations)
+- [ ] Screen reader pass, and hero contrast over the photograph
 - [ ] **AVALONFS has approved the finished site**

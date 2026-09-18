@@ -27,14 +27,14 @@ export default function ComplaintsPage() {
 
           <ol className="steps" data-reveal>
             <li>
-              <h3>Contact the Compliance Officer at AVALONFS</h3>
+              <h2>Contact the Compliance Officer at AVALONFS</h2>
               <p>
                 Get in touch using the details below. Your complaint will be acknowledged within
                 24 hours, or one business day.
               </p>
             </li>
             <li>
-              <h3>You&rsquo;ll receive a written response within 30 days</h3>
+              <h2>You&rsquo;ll receive a written response within 30 days</h2>
               <p>
                 A response letter will be prepared and issued to you setting out the complaint,
                 your rights, any proposed solutions, and the further avenues available to you if
@@ -42,7 +42,7 @@ export default function ComplaintsPage() {
               </p>
             </li>
             <li>
-              <h3>If you&rsquo;re not satisfied, you can go to AFCA</h3>
+              <h2>If you&rsquo;re not satisfied, you can go to AFCA</h2>
               <p>
                 The Australian Financial Complaints Authority provides external complaint
                 resolution at no cost to consumers. AVALONFS is a member, and you can lodge a

@@ -40,7 +40,7 @@ export default function ContactPage() {
                 style={{ '--reveal-delay': `${i * 80}ms` } as React.CSSProperties}
               >
                 <span className="tag">{o.tag}</span>
-                <h3>{o.name}</h3>
+                <h2>{o.name}</h2>
                 <address>
                   {o.lines.map((line) => (
                     <span key={line}>

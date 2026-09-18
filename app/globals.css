@@ -28,6 +28,16 @@
   --gold-40:rgba(200,164,62,0.40);
   --blue-08:rgba(0,77,152,0.08);
 
+  /* ---- ACCESSIBLE TEXT VARIANTS ----
+     The brand gold and grey are fine as rules, icons, dots and borders, and
+     gold on navy clears AA comfortably (7.35:1). As small text on a light
+     background they do not: gold is 2.38:1 and grey 3.54:1 against white,
+     where AA wants 4.5:1. These are the same hues darkened until they pass on
+     both white and the off-white tint, and they are used ONLY where the colour
+     carries text. Measured with axe-core; see the a11y notes in the README. */
+  --gold-text:#866E2A;   /* 4.91:1 on white, 4.55:1 on off-white */
+  --grey-text:#717171;   /* 4.88:1 on white, 4.52:1 on off-white */
+
   --rule:var(--navy-08);
   --rule-light:rgba(255,255,255,0.14);
 
@@ -74,11 +84,24 @@ body{
 img{max-width:100%;display:block}
 
 a{color:var(--blue)}
+/* Focus indicator.
+   The brand gold is only 2.38:1 against white, and WCAG 2.2 asks for 3:1 on a
+   focus indicator, so light surfaces get the darker text gold (4.91:1). On the
+   navy surfaces that would disappear, and the brand gold clears 7.35:1 there,
+   so those are overridden below. */
 a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,
 textarea:focus-visible,summary:focus-visible,[tabindex]:focus-visible{
-  outline:3px solid var(--gold);
+  outline:3px solid var(--gold-text);
   outline-offset:3px;
   border-radius:2px;
+}
+.hero :focus-visible,
+.band :focus-visible,
+.site-footer :focus-visible,
+.licensee-strip :focus-visible,
+.section--dark :focus-visible,
+.to-top:focus-visible{
+  outline-color:var(--gold-lt);
 }
 
 .wrap{max-width:var(--shell);margin:0 auto;padding-inline:var(--gutter)}
@@ -166,7 +189,7 @@ strong,b{font-weight:700}
 .eyebrow{
   font-family:var(--body);
   font-size:11px;font-weight:bold;letter-spacing:4px;text-transform:uppercase;
-  color:var(--gold);margin-bottom:16px;
+  color:var(--gold-text);margin-bottom:16px;
   display:flex;align-items:center;gap:12px;
 }
 /* Small gold tick that draws itself in beside the eyebrow. */
@@ -246,7 +269,7 @@ strong,b{font-weight:700}
   text-decoration:none;letter-spacing:-0.3px;white-space:nowrap;
   display:inline-flex;align-items:baseline;gap:.32em;
 }
-.logo span{color:var(--gold);transition:color var(--t-fast) ease}
+.logo span{color:var(--gold-text);transition:color var(--t-fast) ease}
 .logo:hover span{color:var(--navy)}
 /* The gold dot that trails the wordmark. */
 .logo::after{
@@ -464,12 +487,12 @@ strong,b{font-weight:700}
   color:var(--navy);line-height:1;letter-spacing:-1px;
   display:flex;align-items:baseline;gap:2px;
 }
-.stat .figure .suffix{color:var(--gold);font-size:.62em}
+.stat .figure .suffix{color:var(--gold-text);font-size:.62em}
 .stat .label{
   margin-top:10px;font-size:12px;letter-spacing:1.4px;text-transform:uppercase;
   color:var(--slate);
 }
-.stat .sub{margin-top:6px;font-size:13px;color:var(--grey)}
+.stat .sub{margin-top:6px;font-size:13px;color:var(--grey-text)}
 
 /* ==========================================================================
    CARDS
@@ -564,7 +587,7 @@ strong,b{font-weight:700}
   width:100%;max-width:172px;aspect-ratio:4/5;margin:0 auto 18px;
   background:var(--off-white);border:1px solid var(--rule);border-radius:6px;
   display:flex;align-items:center;justify-content:center;
-  color:var(--grey);font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--grey-text);font-size:10px;letter-spacing:2px;text-transform:uppercase;
 }
 .member-photo img{width:100%;height:100%;object-fit:cover;transition:transform var(--t-slow) var(--ease-out)}
 .member:hover .member-photo img{transform:scale(1.05)}
@@ -579,11 +602,11 @@ strong,b{font-weight:700}
 .member h3{font-size:18px;margin-bottom:5px}
 .member .role{
   font-size:11px;letter-spacing:1.6px;text-transform:uppercase;
-  color:var(--gold);margin-bottom:12px;
+  color:var(--gold-text);margin-bottom:12px;
 }
 .member p{font-size:14px;color:var(--slate)}
 .member-meta{
-  font-size:12px;color:var(--grey);margin-top:12px;line-height:1.7;
+  font-size:12px;color:var(--grey-text);margin-top:12px;line-height:1.7;
   padding-top:12px;border-top:1px solid var(--rule);
 }
 .member-meta a{color:var(--blue);text-decoration:none}
@@ -624,7 +647,7 @@ strong,b{font-weight:700}
 .doc:hover .doc-icon{transform:translateY(3px)}
 .doc span{font-size:13.5px;color:var(--slate)}
 .doc .meta{
-  display:inline-block;margin-top:14px;font-size:11px;color:var(--grey);
+  display:inline-block;margin-top:14px;font-size:11px;color:var(--grey-text);
   letter-spacing:0.5px;padding-top:12px;border-top:1px solid var(--rule);width:100%;
 }
 
@@ -651,16 +674,16 @@ strong,b{font-weight:700}
 .office:target{border-color:var(--gold);box-shadow:var(--shadow-lg)}
 .office:target::before{width:calc(100% + 2px)}
 
-.office h3{font-size:19px;margin:6px 0 4px}
+.office h2,.office h3{font-size:19px;margin:6px 0 4px}
 .office .tag{
-  font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);
+  font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold-text);
   margin-bottom:12px;display:inline-block;
   padding:3px 9px;border:1px solid var(--gold-22);border-radius:99px;background:var(--gold-10);
 }
 .office address{font-style:normal;font-size:14px;color:var(--slate);line-height:1.85}
 .office address a{color:var(--blue);text-decoration:none}
 .office address a:hover{text-decoration:underline}
-.office .note{font-size:13px;color:var(--grey);margin-top:12px;display:block;padding-top:12px;border-top:1px solid var(--rule)}
+.office .note{font-size:13px;color:var(--grey-text);margin-top:12px;display:block;padding-top:12px;border-top:1px solid var(--rule)}
 
 /* ==========================================================================
    FORM
@@ -673,7 +696,7 @@ strong,b{font-weight:700}
   transition:color var(--t-fast) ease;
 }
 .field:focus-within label{color:var(--navy)}
-.field .optional{text-transform:none;letter-spacing:0;font-weight:normal;color:var(--grey)}
+.field .optional{text-transform:none;letter-spacing:0;font-weight:normal;color:var(--grey-text)}
 .field input,.field select,.field textarea{
   width:100%;font-family:var(--body);font-size:16px;color:var(--navy);
   background:var(--white);border:1px solid var(--navy-14);border-radius:4px;
@@ -699,7 +722,7 @@ strong,b{font-weight:700}
   .field-error{animation:fade-up .3s var(--ease-out)}
 }
 .field-count{
-  position:absolute;right:2px;top:0;font-size:11px;color:var(--grey);
+  position:absolute;right:2px;top:0;font-size:11px;color:var(--grey-text);
   letter-spacing:.4px;
 }
 
@@ -747,14 +770,14 @@ strong,b{font-weight:700}
   position:absolute;left:0;top:-2px;
   width:39px;height:39px;border:1px solid var(--gold);border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:bold;color:var(--gold);
+  font-size:13px;font-weight:bold;color:var(--gold-text);
   background:var(--white);
   transition:background-color var(--t-med) var(--ease-out),
              color var(--t-med) var(--ease-out),
              transform var(--t-med) var(--ease-out);
 }
 .steps li:hover::before{background:var(--gold);color:var(--navy);transform:scale(1.08)}
-.steps h3{font-size:18px;margin-bottom:7px}
+.steps h2,.steps h3{font-size:18px;margin-bottom:7px;letter-spacing:-0.2px}
 .steps p{font-size:15px;color:var(--slate)}
 
 .contact-block{
@@ -821,7 +844,7 @@ strong,b{font-weight:700}
   padding-top:28px;font-size:13px;color:rgba(255,255,255,0.64);max-width:104ch;
 }
 .footer-disclosure .entity{color:rgba(255,255,255,0.88);display:block;margin-bottom:12px}
-.footer-copyright{margin-top:24px;font-size:12px;color:rgba(255,255,255,0.42)}
+.footer-copyright{margin-top:24px;font-size:12px;color:rgba(255,255,255,0.58)}
 
 /* ==========================================================================
    404
@@ -1018,7 +1041,7 @@ strong,b{font-weight:700}
 /* Monogram placeholder, shown until a headshot is supplied. */
 .member-monogram{
   font-family:var(--display);font-size:38px;font-weight:600;letter-spacing:1px;
-  color:var(--gold);
+  color:var(--gold-text);
   width:100%;height:100%;display:grid;place-items:center;
   background:
     radial-gradient(120% 120% at 30% 20%, var(--gold-10), transparent 60%),
@@ -1075,7 +1098,7 @@ strong,b{font-weight:700}
 .enquiry-aside dl{display:grid;gap:16px}
 .enquiry-aside dt{
   font-size:10px;letter-spacing:2.4px;text-transform:uppercase;
-  color:var(--gold);font-weight:bold;margin-bottom:4px;
+  color:var(--gold-text);font-weight:bold;margin-bottom:4px;
 }
 .enquiry-aside dd{font-size:15px;color:var(--slate);line-height:1.6}
 .enquiry-aside dd a{color:var(--blue);text-decoration:none}
@@ -1095,7 +1118,7 @@ strong,b{font-weight:700}
   border:1px dashed var(--navy-14);border-radius:99px;
   background:var(--white);
   font-size:11px;letter-spacing:1.4px;text-transform:uppercase;font-weight:bold;
-  color:var(--grey);
+  color:var(--grey-text);
 }
 .preview-badge svg{color:var(--gold);flex:none}
 
@@ -1156,7 +1179,7 @@ strong,b{font-weight:700}
   width:52px;height:52px;border-radius:12px;margin-bottom:24px;
 }
 .card-icon svg{width:24px;height:24px}
-.card h3{font-size:21px;margin-bottom:12px;letter-spacing:-0.4px}
+.card h2,.card h3{font-size:21px;margin-bottom:12px;letter-spacing:-0.4px}
 .card p{font-size:15.5px;line-height:1.65;color:var(--slate)}
 
 /* Documents */
@@ -1167,7 +1190,7 @@ strong,b{font-weight:700}
 
 /* Offices */
 .office{padding:24px 26px 26px}
-.office h3{font-size:20px;letter-spacing:-0.4px}
+.office h2,.office h3{font-size:20px;letter-spacing:-0.4px;margin:6px 0 4px}
 .office address{font-size:15px;line-height:1.8}
 .office .note{font-size:14px;line-height:1.6}
 .office-hours{font-size:14.5px}
@@ -1182,7 +1205,7 @@ strong,b{font-weight:700}
 .stat .sub{font-size:13.5px;line-height:1.55}
 
 /* Complaints timeline */
-.steps h3{font-size:20px;letter-spacing:-0.4px}
+.steps h2,.steps h3{font-size:20px;letter-spacing:-0.4px}
 .steps p{font-size:16px;line-height:1.7}
 
 /* Prose */

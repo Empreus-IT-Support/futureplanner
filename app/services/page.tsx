@@ -29,7 +29,7 @@ export default function ServicesPage() {
             </p>
           </div>
 
-          <ServiceCards items={services} variant="detail" />
+          <ServiceCards items={services} variant="detail" headingLevel={2} />
 
           <div className="section-head section-head--split section-head--spaced" data-reveal>
             <h2>What we don&rsquo;t do</h2>

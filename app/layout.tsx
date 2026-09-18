@@ -37,7 +37,10 @@ const playfair = Playfair_Display({
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
+  // Only the weights the stylesheet uses. Note this does not reduce the
+  // download: both faces are variable fonts, so every weight ships in the one
+  // file either way. It is declared narrowly for accuracy, not for bytes.
+  weight: ['400', '600', '700'],
   display: 'swap',
   variable: '--font-body',
 })
