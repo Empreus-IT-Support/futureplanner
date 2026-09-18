@@ -93,13 +93,23 @@ function headerSafe(value: string) {
   return value.replace(/[\r\n]+/g, ' ').trim()
 }
 
+/** Carries the provider's status and body so callers can log what is safe. */
+class SendError extends Error {
+  constructor(
+    readonly status: number,
+    readonly body: string,
+  ) {
+    super(`mail provider returned ${status}`)
+  }
+}
+
 /**
  * Send through Atlas.
  *
  * Atlas holds the provider credentials; the key here only works for one domain
  * and only for the recipients allowlisted against it, so a leaked key cannot
- * be used to send anywhere else. That allowlist is why `sendAutoReply` below
- * is best-effort: the enquirer's address cannot be known in advance, so it may
+ * be used to send anywhere else. That allowlist is why the auto-reply below is
+ * best-effort: the enquirer's address cannot be known in advance, so it may
  * legitimately be refused.
  */
 async function send(payload: {
@@ -118,8 +128,12 @@ async function send(payload: {
   })
 
   if (!res.ok) {
-    // Status only. The response body can echo the recipient address back.
-    throw new Error(`mail provider returned ${res.status}`)
+    // Keep the provider's explanation. Whether it is safe to log depends on
+    // which send failed, so that decision is left to the caller: the office
+    // notification goes to our own configured address, but the auto-reply goes
+    // to a member of the public.
+    const body = await res.text().catch(() => '')
+    throw new SendError(res.status, body.slice(0, 300))
   }
 }
 
@@ -239,7 +253,10 @@ export async function POST(request: Request) {
       text: lines.join('\n'),
     })
   } catch (err) {
-    logFailure('enquiry send failed', err instanceof Error ? err.message : undefined)
+    logFailure(
+      'enquiry send failed',
+      err instanceof SendError ? `${err.status} ${err.body}` : undefined,
+    )
     return NextResponse.json(
       { error: 'We could not send your enquiry just now. Please email or call us instead.' },
       { status: 502 },
@@ -277,7 +294,7 @@ export async function POST(request: Request) {
       ].join('\n'),
     })
   } catch (err) {
-    logFailure('auto-reply send failed', err instanceof Error ? err.message : undefined)
+    logFailure('auto-reply send failed', err instanceof SendError ? String(err.status) : undefined)
   }
 
   return NextResponse.json({ ok: true })
