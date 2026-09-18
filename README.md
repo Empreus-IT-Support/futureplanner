@@ -35,6 +35,7 @@ npm run dev          # http://localhost:3000
 | --- | --- |
 | `npm run check:words` | Fails if a restricted word appears in copy or a filename |
 | `npm run check:launch` | Reports which launch gates are still open |
+| `npm run check:deployable` | Fails an indexable build if a disclosure PDF is missing |
 | `npm run check` | Restricted words, lint and types together |
 
 ---
@@ -246,6 +247,28 @@ profile names, emails or ASIC numbers, only the holding state. Publishing
 anybody still means setting `consent: true` in `data/team.ts`.
 
 ---
+
+## Not supplied with the handover
+
+These were referenced by the handover but never arrived, and are not in the
+repo. They have to come from the client or AVALONFS:
+
+- **The three disclosure PDFs.** `docs/` in the original archive held only a
+  note saying to put them there. They are AVALONFS documents, not Future
+  Planner ones: FSG v6.2 (Feb 2025), Adviser Profile v6.1 (Apr 2023) and the
+  AVALONFS Privacy Policy (Jan 2023).
+- **`FuturePlanner_BrandingGuide.html`**, which `styles.css` cites as the
+  source of the palette and typography. The colour tokens were carried across
+  from that stylesheet, so they are faithful; the guide itself has not been
+  seen, which is worth knowing when reviewing the typeface change.
+- **`FuturePlanner_Website_Layout_Brief.html`**, which the handover README
+  names as the specification the static build was written against.
+
+`npm run build` refuses to produce an **indexable** build while a disclosure
+document is missing — see `scripts/check-deployable.mjs`. Preview builds are
+unaffected, which is the point: you can deploy and review now, but you cannot
+quietly put a live AFSL site up with a 404 where the Financial Services Guide
+should be.
 
 ## One thing to check with the client
 
