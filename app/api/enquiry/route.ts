@@ -30,6 +30,8 @@ const RESEND_KEY = process.env.RESEND_API_KEY
 /** Bots submit near-instantly. People take longer than this to fill a form. */
 const MIN_ELAPSED_MS = 3_000
 const MAX_FIELD = 5_000
+/** Whole-payload ceiling. The form sends a few hundred bytes in practice. */
+const MAX_BODY_BYTES = 32_000
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -110,9 +112,49 @@ export async function POST(request: Request) {
     )
   }
 
+  // Only accept what the form actually sends. A JSON content type cannot be
+  // set by a plain cross-site form post, so this alone turns away the simplest
+  // kind of drive-by submission.
+  const contentType = request.headers.get('content-type') ?? ''
+  if (!contentType.toLowerCase().includes('application/json')) {
+    return NextResponse.json({ error: 'Unsupported content type.' }, { status: 415 })
+  }
+
+  // Same-origin only. The form lives on this site; nothing else has business
+  // posting to it. Requests with no Origin header at all (curl, some privacy
+  // tooling) still pass, and the honeypot and timing checks still apply.
+  const origin = request.headers.get('origin')
+  if (origin) {
+    const host = request.headers.get('host')
+    let originHost: string | null = null
+    try {
+      originHost = new URL(origin).host
+    } catch {
+      originHost = null
+    }
+    if (!originHost || !host || originHost !== host) {
+      logFailure('cross-origin post rejected')
+      return NextResponse.json({ error: 'Request rejected.' }, { status: 403 })
+    }
+  }
+
+  // Refuse an oversized payload rather than buffering it and validating after.
+  const declared = Number(request.headers.get('content-length') ?? '0')
+  if (Number.isFinite(declared) && declared > MAX_BODY_BYTES) {
+    return NextResponse.json({ error: 'That message is too long to send.' }, { status: 413 })
+  }
+
   let body: Record<string, unknown>
   try {
-    body = (await request.json()) as Record<string, unknown>
+    const raw = await request.text()
+    if (raw.length > MAX_BODY_BYTES) {
+      return NextResponse.json({ error: 'That message is too long to send.' }, { status: 413 })
+    }
+    const parsed: unknown = JSON.parse(raw)
+    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+      throw new Error('payload is not an object')
+    }
+    body = parsed as Record<string, unknown>
   } catch {
     return NextResponse.json({ error: 'Malformed request.' }, { status: 400 })
   }

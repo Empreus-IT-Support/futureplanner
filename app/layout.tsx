@@ -6,6 +6,7 @@ import SiteFooter from '@/components/SiteFooter'
 import MotionProvider from '@/components/MotionProvider'
 import ScrollUI from '@/components/ScrollUI'
 import SiteHeader from '@/components/SiteHeader'
+import StructuredData from '@/components/StructuredData'
 import { site } from '@/data/site'
 import { indexable } from './robots'
 
@@ -73,6 +74,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a className="skip" href="#main">
           Skip to content
         </a>
+
+        <StructuredData />
 
         <MotionProvider />
         <ScrollUI />

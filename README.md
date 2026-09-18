@@ -188,9 +188,20 @@ like "tax-effective".
   contact page (`/contact#mount-isa`), not the homepage. Keep address and phone
   identical across the site, the profiles and ASIC's register — they come from
   `data/site.ts` here, so change them in one place.
-- **Security headers** (HSTS, nosniff, referrer policy, frame options,
-  permissions policy) are set in `next.config.ts`. HSTS assumes HTTPS is
-  enforced at the platform edge.
+- **Security headers** are set in `next.config.ts`: a Content Security Policy
+  locked to `self` on every fetch directive, HSTS, nosniff, referrer policy,
+  `frame-ancestors none`, COOP, CORP and a permissions policy. `X-Powered-By`
+  is off. HSTS assumes HTTPS is enforced at the platform edge.
+  `script-src` keeps `unsafe-inline` deliberately — see the comment above the
+  policy. Removing it means nonces, nonces mean middleware, and that would turn
+  every page dynamic for little gain on a site that loads no third-party
+  scripts at all.
+- **The enquiry endpoint** rejects anything that is not `application/json`,
+  rejects cross-origin posts, and caps the body before parsing it.
+- **Structured data** (`components/StructuredData.tsx`) restates only what is
+  already on the page, and takes people from `publishedTeam()` so the consent
+  gate applies to JSON-LD too. No ratings or reviews — there is no basis for
+  either, and inventing them would be a fabricated claim.
 
 ## Layout and imagery
 
