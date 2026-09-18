@@ -10,7 +10,23 @@
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { POST } from '@/app/api/enquiry/route'
+/**
+ * These cases all assert behaviour that happens BEFORE any mail is sent, so
+ * the route is loaded with the sending key explicitly unset.
+ *
+ * It used to be imported statically and rely on the key simply not being
+ * present. That held locally and broke on Vercel, where the suite runs in
+ * prebuild with the production environment loaded — the "not configured"
+ * assertions failed, and worse, the tests made real calls to Atlas from the
+ * build machine. Never depend on the ambient environment here.
+ */
+let POST: (typeof import('@/app/api/enquiry/route'))['POST']
+
+beforeEach(async () => {
+  vi.resetModules()
+  vi.stubEnv('ATLAS_SENDING_KEY', '')
+  ;({ POST } = await import('@/app/api/enquiry/route'))
+})
 
 let ip = 0
 const nextIp = () => `203.0.113.${(ip += 1) % 255}`
@@ -54,8 +70,8 @@ describe('rejection paths', () => {
 
   it('allows a same-origin post through to the mail step', async () => {
     const res = await post(valid, { origin: 'https://futureplanner.au' })
-    // 503, not 200: no mail key is configured in tests. Reaching that means
-    // every validation gate passed.
+    // 503, not 200: the sending key is deliberately unset above. Reaching
+    // that path means every validation gate passed.
     expect(res.status).toBe(503)
   })
 
