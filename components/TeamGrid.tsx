@@ -31,18 +31,14 @@ export default function TeamGrid() {
 
   return (
     <>
+      {/* Development only. A production build ignores the preview flag, so this
+          can never reach the live site — it is here purely so a flagged-on
+          preview is not mistaken for published profiles. */}
       {preview && (
-        <div className="team-pending" style={{ marginBottom: 28 }}>
-          <IconAlert size={22} />
-          <div>
-            <h3>Preview only — consent not yet recorded</h3>
-            <p>
-              These profiles are showing because NEXT_PUBLIC_PREVIEW_TEAM is set in this
-              development environment. A production build ignores the flag and publishes nobody
-              until their consent is recorded in data/team.ts.
-            </p>
-          </div>
-        </div>
+        <p className="preview-badge">
+          <IconAlert size={14} />
+          Preview — consent not recorded
+        </p>
       )}
 
       <div className="team-grid">

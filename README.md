@@ -147,9 +147,22 @@ like "tax-effective".
 
 ## Notes on the build
 
-- **Colours and type** come from the brand guide and are set as CSS custom
-  properties at the top of `globals.css`. Nothing outside those tokens is used.
-  That is also why this is plain CSS rather than a utility framework.
+- **Colours** come from the brand guide and are set as CSS custom properties at
+  the top of `globals.css`. Nothing outside those tokens is used. That is also
+  why this is plain CSS rather than a utility framework.
+- **Type: one deliberate departure from the brand guide.** Playfair Display is
+  the brand serif and is unchanged. The body face is **Source Sans 3**, not the
+  Arial the guide specified — Arial is a websafe fallback rather than a chosen
+  face, and Source Sans 3 is markedly more legible at the small sizes that
+  matter most here (the footer disclosure and the general advice warning).
+  This needs sign-off along with the rest of the design. To revert, set
+  `--body` back to `Arial, Helvetica, sans-serif` in `globals.css` and drop the
+  `Source_Sans_3` import from `app/layout.tsx`.
+  Both faces are self-hosted by `next/font` — no request goes to the Google
+  Fonts CDN.
+- **Careful with `ch` units** if the body face is ever swapped again. `ch` is
+  relative to the element font, so every `ch`-based column re-flows; that is
+  why `.hero-copy` is sized in px.
 - **Header and footer are components**, not copies. A change is made once.
 - **The team and the offices are data.** People and office details can be added
   or removed without touching a page — which is what the CMS note in the
@@ -252,6 +265,7 @@ approve the change if the disclosure is the one that is wrong.
 - [x] Hero image hosted locally and `heroImage` set (interim photo — client photography still to come)
 - [ ] All six consents returned; `consent: true` set; headshots added
 - [ ] Adviser name discrepancy resolved
+- [ ] Body typeface change (Arial to Source Sans 3) signed off
 - [ ] HTTPS enforced, HSTS on, admin access behind MFA
 - [ ] `npm run check` passes
 - [ ] Contrast and keyboard navigation checked
