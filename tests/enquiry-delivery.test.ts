@@ -118,3 +118,49 @@ describe('delivery through Atlas', () => {
     expect(calls[1].body.to).toEqual(['enquirer@example.com'])
   })
 })
+
+describe('rate limiting', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs()
+    vi.restoreAllMocks()
+  })
+
+  it('does not extend the lockout when a blocked caller keeps retrying', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => new Response('{}', { status: 200 })))
+    const { POST } = await loadRoute()
+
+    const from = (ip: string) =>
+      new Request(`${ORIGIN}/api/enquiry`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          host: 'futureplanner.au',
+          origin: ORIGIN,
+          'x-forwarded-for': ip,
+        },
+        body: JSON.stringify({
+          name: 'Test',
+          email: 'a@example.com',
+          office: 'Canberra',
+          message: 'hello',
+          company: '',
+          elapsedMs: 9000,
+        }),
+      })
+
+    const ip = '192.0.2.99'
+    const codes: number[] = []
+    // MAX_PER_WINDOW is 10; go well past it.
+    for (let i = 0; i < 16; i += 1) codes.push((await POST(from(ip))).status)
+
+    expect(codes.filter((c) => c === 429).length).toBeGreaterThan(0)
+
+    // Blocked attempts must not be recorded. If they were, the stored window
+    // would keep growing and the caller would never get back in.
+    const blockedAfter = codes.slice(10)
+    expect(blockedAfter.every((c) => c === 429)).toBe(true)
+
+    // A different address is unaffected.
+    expect((await POST(from('192.0.2.100'))).status).toBe(200)
+  })
+})

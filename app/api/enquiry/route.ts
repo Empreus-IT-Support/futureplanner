@@ -65,9 +65,19 @@ function rateLimited(ip: string) {
   }
 
   const recent = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS)
+
+  // Check before recording. Recording first meant every blocked retry pushed a
+  // fresh timestamp, so anyone who kept trying stayed locked out indefinitely
+  // even after the original window had passed — the opposite of what a
+  // one-hour limit should do.
+  if (recent.length >= MAX_PER_WINDOW) {
+    hits.set(ip, recent)
+    return true
+  }
+
   recent.push(now)
   hits.set(ip, recent)
-  return recent.length > MAX_PER_WINDOW
+  return false
 }
 
 /**
