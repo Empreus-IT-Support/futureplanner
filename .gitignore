@@ -32,6 +32,9 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# ...but the template belongs in the repo: it documents the variables the
+# enquiry form needs, and it holds no real values.
+!.env.example
 
 # vercel
 .vercel
