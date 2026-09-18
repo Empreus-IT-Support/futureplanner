@@ -151,13 +151,15 @@ like "tax-effective".
   the top of `globals.css`. Nothing outside those tokens is used. That is also
   why this is plain CSS rather than a utility framework.
 - **Type: one deliberate departure from the brand guide.** Playfair Display is
-  the brand serif and is unchanged. The body face is **Source Sans 3**, not the
-  Arial the guide specified — Arial is a websafe fallback rather than a chosen
-  face, and Source Sans 3 is markedly more legible at the small sizes that
-  matter most here (the footer disclosure and the general advice warning).
+  the brand serif and is unchanged. The body face is **Plus Jakarta Sans**, not
+  the Arial the guide specified — Arial is a websafe fallback rather than a
+  chosen face. A narrow UI face reads thin beside a high-contrast serif; Plus
+  Jakarta Sans has wider, rounder forms that give the page better colour, and
+  it stays clearly legible at the small sizes that matter most here (the footer
+  disclosure and the general advice warning).
   This needs sign-off along with the rest of the design. To revert, set
   `--body` back to `Arial, Helvetica, sans-serif` in `globals.css` and drop the
-  `Source_Sans_3` import from `app/layout.tsx`.
+  `Plus_Jakarta_Sans` import from `app/layout.tsx`.
   Both faces are self-hosted by `next/font` — no request goes to the Google
   Fonts CDN.
 - **Careful with `ch` units** if the body face is ever swapped again. `ch` is
@@ -265,7 +267,7 @@ approve the change if the disclosure is the one that is wrong.
 - [x] Hero image hosted locally and `heroImage` set (interim photo — client photography still to come)
 - [ ] All six consents returned; `consent: true` set; headshots added
 - [ ] Adviser name discrepancy resolved
-- [ ] Body typeface change (Arial to Source Sans 3) signed off
+- [ ] Body typeface change (Arial to Plus Jakarta Sans) signed off
 - [ ] HTTPS enforced, HSTS on, admin access behind MFA
 - [ ] `npm run check` passes
 - [ ] Contrast and keyboard navigation checked

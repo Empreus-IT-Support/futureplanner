@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Playfair_Display, Source_Sans_3 } from 'next/font/google'
+import { Playfair_Display, Plus_Jakarta_Sans } from 'next/font/google'
 
 import AdviceWarning from '@/components/AdviceWarning'
 import SiteFooter from '@/components/SiteFooter'
@@ -16,11 +16,14 @@ import './globals.css'
  *
  * Playfair Display is the brand serif and stays as the display face.
  *
- * Source Sans 3 replaces Arial for body text. NOTE: Arial came from
+ * Plus Jakarta Sans replaces Arial for body text. NOTE: Arial came from
  * FuturePlanner_BrandingGuide.html, so this is a deliberate departure from the
  * brand guide and needs sign-off with the rest of the design. It is a one-line
- * revert — see --body in globals.css. Source Sans 3 was chosen for its
- * legibility at small sizes, which matters most for the footer disclosure and
+ * revert — see --body in globals.css.
+ *
+ * Chosen because it holds its own beside a high-contrast serif: wider, rounder
+ * forms give the page better colour than a narrow UI face, and it stays clearly
+ * legible at the small sizes that matter most here — the footer disclosure and
  * the general advice warning.
  */
 const playfair = Playfair_Display({
@@ -30,9 +33,9 @@ const playfair = Playfair_Display({
   variable: '--font-display',
 })
 
-const sourceSans = Source_Sans_3({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  weight: ['400', '600', '700'],
+  weight: ['400', '500', '600', '700', '800'],
   display: 'swap',
   variable: '--font-body',
 })
@@ -57,7 +60,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-AU" className={`${playfair.variable} ${sourceSans.variable}`}>
+    <html lang="en-AU" className={`${playfair.variable} ${jakarta.variable}`}>
       <body>
         <a className="skip" href="#main">
           Skip to content

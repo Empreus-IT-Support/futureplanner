@@ -20,7 +20,7 @@ export default function HomePage() {
       <Hero />
       <LicenseeStrip />
 
-      <section className="section">
+      <section className="section section--dark">
         <div className="wrap">
           <Stats />
         </div>

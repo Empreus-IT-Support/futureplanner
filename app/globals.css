@@ -144,12 +144,24 @@ textarea:focus-visible,summary:focus-visible,[tabindex]:focus-visible{
 /* ==========================================================================
    TYPE
    ========================================================================== */
-h1,h2,h3,h4{font-family:var(--display);font-weight:600;line-height:1.14;color:var(--navy)}
-h1{font-size:clamp(34px,5.4vw,58px);font-weight:700;letter-spacing:-0.8px}
-h2{font-size:clamp(26px,3.6vw,38px);letter-spacing:-0.3px}
-h3{font-size:clamp(18px,2vw,21px)}
-p{margin-bottom:16px}
+h1,h2,h3,h4{font-family:var(--display);font-weight:600;line-height:1.1;color:var(--navy)}
+h1{font-size:clamp(38px,5.8vw,66px);font-weight:700;letter-spacing:-1.4px}
+h2{font-size:clamp(28px,3.8vw,44px);font-weight:700;letter-spacing:-0.9px}
+h3{font-size:clamp(19px,2vw,23px);letter-spacing:-0.3px}
+p{margin-bottom:17px}
 p:last-child{margin-bottom:0}
+
+/* Body copy sits a touch heavier than a default 400 so it holds its colour
+   against the display serif instead of looking washed out. */
+body{font-weight:420}
+strong,b{font-weight:700}
+
+/* The step between a heading and body copy. Without it the page drops
+   straight from a 60px headline to 15px text and reads as two sizes. */
+.lede{
+  font-size:clamp(17px,1.9vw,21px);
+  line-height:1.62;color:var(--slate);font-weight:420;letter-spacing:-0.2px;
+}
 
 .eyebrow{
   font-family:var(--body);
@@ -167,7 +179,6 @@ p:last-child{margin-bottom:0}
   html.js-motion [data-reveal].is-visible .eyebrow::before{transform:scaleX(1)}
 }
 
-.lede{font-size:clamp(16px,1.75vw,19px);color:var(--slate)}
 
 .rule-gold{
   width:44px;height:2px;background:var(--gold);margin:18px 0 26px;border:0;
@@ -1158,3 +1169,112 @@ p:last-child{margin-bottom:0}
   color:var(--grey);
 }
 .preview-badge svg{color:var(--gold);flex:none}
+
+/* ==========================================================================
+   DESIGN PASS — stronger rhythm
+   ========================================================================== */
+
+/* Hero: let the photograph run off the right edge of the viewport instead of
+   stopping at the container. The offset is the distance from the container's
+   content edge to the viewport edge, so it works at any width. */
+@media (min-width:900px){
+  .hero{padding-block:clamp(56px,6vw,92px)}
+  .hero-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.02fr);align-items:center}
+  .hero-figure{
+    margin-right:calc(-1 * (max(0px, (100vw - var(--shell)) / 2) + var(--gutter)));
+    border-radius:14px 0 0 14px;
+    min-height:min(620px, 70vh);
+  }
+}
+
+/* The scroll cue was floating in dead space under the buttons. */
+.scroll-cue{margin-top:26px;font-size:10px}
+
+/* --------------------------------------------------------------------------
+   Stats on navy. The page was white, cream, white, cream all the way down;
+   one dark band gives it an anchor and stops the sections blurring together.
+   -------------------------------------------------------------------------- */
+.section--dark{
+  background:var(--navy);color:rgba(255,255,255,0.72);
+  border-bottom:0;position:relative;overflow:hidden;
+}
+.section--dark::after{
+  content:'';position:absolute;left:0;right:0;bottom:0;height:1px;
+  background:linear-gradient(90deg, transparent, var(--gold-40), transparent);
+}
+.section--dark .stat{
+  background:transparent;border:0;border-left:1px solid var(--rule-light);
+  border-radius:0;padding:4px 0 4px 26px;
+}
+.section--dark .stat:hover{transform:none;box-shadow:none;border-color:var(--gold-40)}
+.section--dark .stat .figure{color:var(--white)}
+.section--dark .stat .figure .suffix{color:var(--gold)}
+.section--dark .stat .label{color:var(--gold-lt);font-weight:600}
+.section--dark .stat .sub{color:rgba(255,255,255,0.55)}
+.section--dark .stats{gap:clamp(20px,3vw,40px)}
+
+@media (max-width:640px){
+  .section--dark .stat{padding-left:20px}
+}
+
+/* ==========================================================================
+   DESIGN PASS 2 — card presence and small-text sizing
+
+   The small sizes were tuned for Arial. Plus Jakarta Sans has a larger
+   x-height but needs a little more room to breathe, and 13-14px copy read as
+   undersized against a 16px body. Everything below moves up a step.
+   ========================================================================== */
+.card-grid{gap:clamp(18px,2vw,26px)}
+.card{
+  padding:36px 32px 38px;border-radius:10px;
+  border-color:var(--navy-08);
+}
+.card-icon{
+  width:52px;height:52px;border-radius:12px;margin-bottom:24px;
+}
+.card-icon svg{width:24px;height:24px}
+.card h3{font-size:21px;margin-bottom:12px;letter-spacing:-0.4px}
+.card p{font-size:15.5px;line-height:1.65;color:var(--slate)}
+
+/* Documents */
+.doc{padding:30px 30px 28px}
+.doc strong{font-size:19px;letter-spacing:-0.3px}
+.doc span{font-size:14.5px;line-height:1.6}
+.doc .meta{font-size:12px;letter-spacing:0.4px}
+
+/* Offices */
+.office{padding:24px 26px 26px}
+.office h3{font-size:20px;letter-spacing:-0.4px}
+.office address{font-size:15px;line-height:1.8}
+.office .note{font-size:14px;line-height:1.6}
+.office-hours{font-size:14.5px}
+
+/* Team */
+.member h3{font-size:19px}
+.member p{font-size:14.5px;line-height:1.65}
+.member-meta{font-size:12.5px;line-height:1.7}
+
+/* Stats */
+.stat .label{font-size:11.5px;letter-spacing:1.6px}
+.stat .sub{font-size:13.5px;line-height:1.55}
+
+/* Complaints timeline */
+.steps h3{font-size:20px;letter-spacing:-0.4px}
+.steps p{font-size:16px;line-height:1.7}
+
+/* Prose */
+.about-copy p{font-size:16px;line-height:1.72}
+.about-copy p:first-child{font-size:clamp(17px,1.8vw,19.5px);line-height:1.6;color:var(--navy)}
+.section-head > p{font-size:16.5px;line-height:1.65}
+
+/* The advice warning and the disclosure keep normal body size and contrast.
+   They are not to be shrunk — see data/compliance.ts. */
+.advice-warning p{font-size:14.5px;line-height:1.7}
+.footer-disclosure{font-size:13.5px;line-height:1.8}
+.site-footer{font-size:14px}
+.footer-offices p{font-size:14px}
+
+/* Form */
+.field label{font-size:12.5px;letter-spacing:1.2px}
+.collection-notice{font-size:14px;line-height:1.6}
+.enquiry-aside dd{font-size:15.5px}
