@@ -99,6 +99,19 @@ function headerSafe(value: string) {
   return value.replace(/[\r\n]+/g, ' ').trim()
 }
 
+/**
+ * What Atlas means by each status, from the error reference on the key page.
+ * Logging the meaning alongside the code saves looking it up, and these are
+ * the four that actually recur.
+ */
+const ATLAS_STATUS: Record<number, string> = {
+  400: 'a required field is missing, or reply_to is not a valid address',
+  401: 'the key is wrong or has been revoked',
+  403: 'the from address is not permitted, or a recipient is not on the allowed list',
+  404: 'the sending domain is verified but not linked in Azure yet',
+  429: 'rate limited by Atlas',
+}
+
 /** Carries the provider's status and body so callers can log what is safe. */
 class SendError extends Error {
   constructor(
@@ -261,7 +274,9 @@ export async function POST(request: Request) {
   } catch (err) {
     logFailure(
       'enquiry send failed',
-      err instanceof SendError ? `${err.status} ${err.body}` : undefined,
+      err instanceof SendError
+        ? `${err.status} (${ATLAS_STATUS[err.status] ?? 'unrecognised status'}) ${err.body}`
+        : undefined,
     )
     return NextResponse.json(
       { error: 'We could not send your enquiry just now. Please email or call us instead.' },
@@ -300,7 +315,12 @@ export async function POST(request: Request) {
       ].join('\n'),
     })
   } catch (err) {
-    logFailure('auto-reply send failed', err instanceof SendError ? String(err.status) : undefined)
+    logFailure(
+      'auto-reply send failed',
+      err instanceof SendError
+        ? `${err.status} (${ATLAS_STATUS[err.status] ?? 'unrecognised status'})`
+        : undefined,
+    )
   }
 
   return NextResponse.json({ ok: true })
