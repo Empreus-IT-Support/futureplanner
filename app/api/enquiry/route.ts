@@ -25,11 +25,17 @@ export const runtime = 'nodejs'
 
 const TO = process.env.ENQUIRY_TO ?? site.email
 /**
- * Atlas registers one sending address per domain and rejects any other, so
- * this must match what the key was minted for. Accepts either a bare address
- * or "Name <addr>" — Atlas wants the bare address, so it is extracted below.
+ * Atlas only accepts a registered sending address and rejects any other with
+ * a 403. Its own integration example and its error reference both name
+ * DoNotReply@ as the address to send as, so that is the default here.
+ *
+ * Accepts either a bare address or "Name <addr>" — Atlas wants the bare
+ * address, so it is extracted below.
+ *
+ * The visitor's address goes in reply_to and never in from: sending as a
+ * domain Atlas is not authorised for fails DMARC and the mail is binned.
  */
-const FROM = process.env.ENQUIRY_FROM ?? 'info@futureplanner.au'
+const FROM = process.env.ENQUIRY_FROM ?? 'DoNotReply@futureplanner.au'
 const ATLAS_KEY = process.env.ATLAS_SENDING_KEY
 
 /** "Future Planner <info@futureplanner.au>" -> "info@futureplanner.au" */

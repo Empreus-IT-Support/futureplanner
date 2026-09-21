@@ -39,7 +39,7 @@ async function loadRoute() {
   vi.resetModules()
   vi.stubEnv('ATLAS_SENDING_KEY', 'atl_test_key_not_real')
   vi.stubEnv('ENQUIRY_TO', 'admin@futureplanner.au')
-  vi.stubEnv('ENQUIRY_FROM', 'Future Planner <info@futureplanner.au>')
+  vi.stubEnv('ENQUIRY_FROM', 'Future Planner <DoNotReply@futureplanner.au>')
   return import('@/app/api/enquiry/route')
 }
 
@@ -80,7 +80,7 @@ describe('delivery through Atlas', () => {
     expect(calls[0].url).toBe('https://atlascontrol.io/api/email/send')
     expect(calls[0].auth).toBe('Bearer atl_test_key_not_real')
     // Atlas wants a bare address; the display-name form must be unwrapped.
-    expect(calls[0].body.from).toBe('info@futureplanner.au')
+    expect(calls[0].body.from).toBe('DoNotReply@futureplanner.au')
     expect(calls[0].body.to).toEqual(['admin@futureplanner.au'])
     expect(calls[0].body.reply_to).toBe('enquirer@example.com')
     expect(calls[0].body.subject).toBe('Website enquiry — Canberra')
