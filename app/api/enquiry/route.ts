@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 
-import { generalAdviceWarning } from '@/data/compliance'
-import { enquiryOffices, fsgUrl, site } from '@/data/site'
+import { enquiryOffices, site } from '@/data/site'
 
 /**
  * Enquiry handler.
@@ -11,7 +10,8 @@ import { enquiryOffices, fsgUrl, site } from '@/data/site'
  *   · delivered to admin@futureplanner.au
  *   · Reply-To set to the sender
  *   · subject line "Website enquiry — [office]"
- *   · auto-reply carrying the FSG link and the general advice warning
+ *   · auto-reply carrying the FSG link and the general advice warning — now
+ *     composed in Atlas rather than here, see the send call below
  *   · spam protection with no third-party tracking (honeypot + timing + rate
  *     limit), so nothing here needs the AVALONFS Privacy Policy extended
  *   · no plain-text logging of submissions — see `logFailure` below
@@ -137,6 +137,8 @@ async function send(payload: {
   subject: string
   text: string
   reply_to?: string
+  /** Asks Atlas to send its own acknowledgement to the reply_to address. */
+  auto_reply?: boolean
 }) {
   const res = await fetch('https://atlascontrol.io/api/email/send', {
     method: 'POST',
@@ -264,13 +266,25 @@ export async function POST(request: Request) {
   ]
 
   try {
-    // 1. The enquiry itself, to the office inbox. This one is the point of the
-    //    form: if it fails, the submission has genuinely failed.
+    // The enquiry to the office, and — via auto_reply — Atlas's acknowledgement
+    // to the person who sent it.
+    //
+    // The acknowledgement is deliberately NOT composed here. The key is
+    // allowlisted to a fixed set of recipients, and the auto-reply is the one
+    // message it may send to an address outside that list. Atlas therefore
+    // holds the wording itself: a stolen key can ask for it to be sent, but
+    // cannot change what it says.
+    //
+    // That is also where the FSG link and the general advice warning live, so
+    // the handover's auto-reply requirement is met in Atlas rather than in
+    // this file. If the acknowledgement ever stops arriving, check the
+    // Auto-reply panel on the key before looking here.
     await send({
       to: [TO],
       reply_to: headerSafe(email),
       subject: `Website enquiry — ${headerSafe(office)}`,
       text: lines.join('\n'),
+      auto_reply: true,
     })
   } catch (err) {
     logFailure(
@@ -282,45 +296,6 @@ export async function POST(request: Request) {
     return NextResponse.json(
       { error: 'We could not send your enquiry just now. Please email or call us instead.' },
       { status: 502 },
-    )
-  }
-
-  // 2. Auto-reply, carrying the FSG link and the general advice warning.
-  //
-  //    Best-effort on purpose. The Atlas key is allowlisted to a fixed set of
-  //    recipients, and an enquirer's address cannot be on that list in
-  //    advance, so this send may be refused by design. When it is, the enquiry
-  //    has still reached the office — telling the visitor their message failed
-  //    would be worse than wrong, it would make them send it again.
-  //
-  //    The auto-reply is a handover requirement, so a persistent failure here
-  //    needs fixing rather than tolerating: it shows up in the logs as its own
-  //    stage. See the README.
-  try {
-    await send({
-      to: [headerSafe(email)],
-      reply_to: TO,
-      subject: 'We have received your enquiry — Future Planner',
-      text: [
-        `Hello ${name},`,
-        '',
-        'Thanks for getting in touch. We have received your enquiry and someone will respond shortly.',
-        '',
-        'Our Financial Services Guide sets out what AVALONFS is licensed to provide, how advisers',
-        'are paid, and how complaints are handled. You can read it here:',
-        fsgUrl,
-        '',
-        `General advice warning. ${generalAdviceWarning}`,
-        '',
-        `${site.legalName} · ${site.phone} · ${site.email}`,
-      ].join('\n'),
-    })
-  } catch (err) {
-    logFailure(
-      'auto-reply send failed',
-      err instanceof SendError
-        ? `${err.status} (${ATLAS_STATUS[err.status] ?? 'unrecognised status'})`
-        : undefined,
     )
   }
 

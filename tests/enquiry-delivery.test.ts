@@ -4,11 +4,10 @@
  * The module reads ATLAS_SENDING_KEY at import time, so each case sets the
  * environment and then imports a fresh copy.
  *
- * The case that matters most is the second one. Atlas keys are allowlisted to
- * a fixed set of recipients, and an enquirer's address cannot be on that list
- * in advance — so the auto-reply may be refused by design. When that happens
- * the enquiry has still reached the office, and telling the visitor it failed
- * would make them send it again.
+ * The acknowledgement to the enquirer is no longer sent from here. Atlas keys
+ * are allowlisted to fixed recipients, and the auto-reply is the one message a
+ * key may send outside that list — so Atlas holds the wording and the site
+ * just sets auto_reply. One call now, not two.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -86,36 +85,31 @@ describe('delivery through Atlas', () => {
     expect(calls[0].body.subject).toBe('Website enquiry — Canberra')
   })
 
-  it('still reports success when the auto-reply is refused', async () => {
-    // First send succeeds, second is rejected as a non-allowlisted recipient.
-    mockFetch((n) => new Response('{}', { status: n === 1 ? 200 : 403 }))
+  it('asks Atlas to send the acknowledgement, in one call not two', async () => {
+    mockFetch(() => new Response('{}', { status: 200 }))
     const { POST } = await loadRoute()
+    await POST(request())
 
-    const res = await POST(request())
-    expect(res.status).toBe(200)
-    await expect(res.json()).resolves.toEqual({ ok: true })
-    expect(calls).toHaveLength(2)
+    // auto_reply plus reply_to is what triggers Atlas's acknowledgement. The
+    // wording lives in Atlas, not here: the key is allowlisted to fixed
+    // recipients and this is the only message it may send to an address
+    // outside that list, so a stolen key cannot alter what it says.
+    //
+    // NOTE: that means the FSG link and the general advice warning are no
+    // longer assertable from this repo. They are configured in the Auto-reply
+    // panel on the key, and are verified there rather than by these tests.
+    expect(calls).toHaveLength(1)
+    expect(calls[0].body.auto_reply).toBe(true)
+    expect(calls[0].body.reply_to).toBe('enquirer@example.com')
   })
 
-  it('reports failure when the enquiry itself cannot be sent', async () => {
+  it('reports failure when the enquiry cannot be sent', async () => {
     mockFetch(() => new Response('{}', { status: 500 }))
     const { POST } = await loadRoute()
 
     const res = await POST(request())
     expect(res.status).toBe(502)
-    // The auto-reply is not attempted if the enquiry never got through.
     expect(calls).toHaveLength(1)
-  })
-
-  it('carries the FSG link and the advice warning in the auto-reply', async () => {
-    mockFetch(() => new Response('{}', { status: 200 }))
-    const { POST } = await loadRoute()
-    await POST(request())
-
-    const autoReply = String(calls[1].body.text)
-    expect(autoReply).toContain('/docs/FSG-v6-2-2025-02.pdf')
-    expect(autoReply).toContain('General advice warning.')
-    expect(calls[1].body.to).toEqual(['enquirer@example.com'])
   })
 })
 

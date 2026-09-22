@@ -74,16 +74,18 @@ Two consequences worth knowing:
 
 - `ENQUIRY_FROM` must be the address the key was registered for. Atlas rejects
   any other address on the domain.
-- **The auto-reply to the enquirer is best-effort.** Their address cannot be on
-  the allowlist in advance, so Atlas may refuse it by design. The handler sends
-  the office notification first and treats that as the real outcome; if the
-  auto-reply is refused the enquiry has still arrived, and telling the visitor
-  it failed would only make them send it again. A refused auto-reply is logged
-  as its own stage.
+- **The acknowledgement to the enquirer is sent by Atlas, not by this site.**
+  The key is allowlisted to fixed recipients, and the auto-reply is the one
+  message it may send to an address outside that list — so Atlas holds the
+  wording. A stolen key can ask for it to be sent but cannot change what it
+  says. The site just passes `auto_reply: true` and the visitor address as
+  `reply_to`.
 
-  The auto-reply is a handover requirement — it carries the FSG link and the
-  general advice warning — so if it is being refused persistently that needs
-  resolving with Atlas rather than tolerating.
+  **This is where the FSG link and the general advice warning live**, which is
+  the handover requirement. They are configured in the Auto-reply panel on the
+  key, so they are no longer assertable from this repo — the tests can only
+  check that the acknowledgement is requested. If it stops arriving, or the
+  wording needs changing, that is in Atlas.
 
 Spam protection is a honeypot, a minimum time-on-page, and a per-IP rate limit.
 None of it involves a third party.
