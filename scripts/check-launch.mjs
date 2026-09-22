@@ -49,8 +49,10 @@ if (/^export const heroImage[^=]*=\s*null/m.test(docSource)) {
 
 // 4. Form delivery.
 console.log('\nEnquiry form')
-if (process.env.ATLAS_SENDING_KEY) ok('Atlas sending key present in this environment')
-else todo('ATLAS_SENDING_KEY not set — the form returns 503 and tells people to email instead')
+// Deliberately not checked against process.env: this script runs locally, and
+// the key that matters lives in the Vercel project. Reporting on the local
+// shell produced a false "pending" for something already working.
+console.log('  [manual]  ATLAS_SENDING_KEY set in the Vercel project (not checkable from here)')
 console.log('  [manual]  ENQUIRY_TO is on the Send only to allowlist in Atlas')
 console.log('  [manual]  Atlas Auto-reply is ON for the key, with the FSG link and advice warning')
 console.log('  [manual]  SPF, DKIM and DMARC on futureplanner.au')
