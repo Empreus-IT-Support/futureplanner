@@ -110,6 +110,7 @@ const ATLAS_STATUS: Record<number, string> = {
   403: 'the from address is not permitted, or a recipient is not on the allowed list',
   404: 'the sending domain is verified but not linked in Azure yet',
   429: 'rate limited by Atlas',
+  503: 'the sending key is not ready — check the reason field, e.g. DomainNotLinked',
 }
 
 /** Carries the provider's status and body so callers can log what is safe. */
