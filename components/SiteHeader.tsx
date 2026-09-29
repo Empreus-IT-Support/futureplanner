@@ -6,9 +6,10 @@ import { useEffect, useRef, useState } from 'react'
 
 import { IconArrow } from './Icons'
 
+// Order follows the order the home page scrolls in, which is services first.
 const links = [
-  { href: '/#about', label: 'About', match: '/', section: 'about' },
   { href: '/services', label: 'Services', match: '/services' },
+  { href: '/#about', label: 'About', match: '/', section: 'about' },
   { href: '/#team', label: 'Our team', match: '/', section: 'team' },
   { href: '/#documents', label: 'Documents', match: '/', section: 'documents' },
   { href: '/contact', label: 'Contact', match: '/contact' },

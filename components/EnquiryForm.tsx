@@ -6,7 +6,7 @@ import { collectionNotice } from '@/data/compliance'
 import { docHref, documents, enquiryOffices } from '@/data/site'
 import { IconAlert, IconArrow, IconCheck } from './Icons'
 
-type Errors = Partial<Record<'name' | 'email' | 'message', string>>
+type Errors = Partial<Record<'name' | 'email' | 'phone' | 'message', string>>
 type Status = { kind: 'idle' | 'sending' } | { kind: 'ok' } | { kind: 'error'; message: string }
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -57,6 +57,9 @@ export default function EnquiryForm() {
     if (!payload.name) next.name = 'Please tell us your name.'
     if (!payload.email) next.email = 'Please give us an email address so we can reply.'
     else if (!EMAIL.test(payload.email)) next.email = 'That email address does not look right.'
+    // Phone is required at the client's request, so an enquiry can be answered
+    // by a call rather than only by email.
+    if (!payload.phone) next.phone = 'Please give us a phone number.'
     if (!payload.message) next.message = 'Please tell us briefly what you are after.'
 
     setErrors(next)
@@ -171,10 +174,23 @@ export default function EnquiryForm() {
         </div>
 
         <div className="field">
-          <label htmlFor="phone">
-            Phone <span className="optional">(optional)</span>
-          </label>
-          <input type="tel" id="phone" name="phone" autoComplete="tel" />
+          <label htmlFor="phone">Phone</label>
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            autoComplete="tel"
+            required
+            aria-invalid={errors.phone ? true : undefined}
+            aria-describedby={errors.phone ? 'phone-error' : undefined}
+            onInput={() => clearError('phone')}
+          />
+          {errors.phone && (
+            <span className="field-error" id="phone-error">
+              <IconAlert size={15} />
+              {errors.phone}
+            </span>
+          )}
         </div>
 
         <div className="field">

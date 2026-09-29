@@ -95,6 +95,14 @@ describe('rejection paths', () => {
     expect(res.status).toBe(400)
   })
 
+  // Phone became required at the client's request, so an enquiry can be
+  // answered by a call. The browser marks the input required, but that is a
+  // convenience — this is the check that actually holds.
+  it('refuses an enquiry with no phone number', async () => {
+    const res = await post({ ...valid, phone: '' })
+    expect(res.status).toBe(400)
+  })
+
   it('refuses an address that is not an email', async () => {
     const res = await post({ ...valid, email: 'not-an-email' })
     expect(res.status).toBe(400)

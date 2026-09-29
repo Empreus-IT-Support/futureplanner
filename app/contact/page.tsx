@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 import EnquiryForm from '@/components/EnquiryForm'
 import { IconArrow, IconClock } from '@/components/Icons'
-import { docHref, documents, offices, site } from '@/data/site'
+import { contactHours, docHref, documents, offices, site } from '@/data/site'
 
 export const metadata: Metadata = {
   title: 'Contact',
@@ -26,6 +26,17 @@ export default function ContactPage() {
               Three offices, and video meetings for clients anywhere else in Australia.
             </p>
           </div>
+
+          {/*
+            General contact times for the firm. Stated once, here, because none
+            of the three offices is staffed across the week — each is by
+            appointment, and showing weekday opening times against an address
+            would be misleading.
+          */}
+          <p className="contact-hours" data-reveal>
+            <IconClock size={16} />
+            {contactHours}
+          </p>
 
           {/* Each office has a stable anchor. Google Business Profile listings
               point at /contact#mount-isa and the like, never the homepage.
@@ -53,7 +64,7 @@ export default function ContactPage() {
 
                 <span className="office-hours">
                   <IconClock size={15} />
-                  {o.hours}
+                  {o.availability}
                 </span>
 
                 {o.adviser && (
@@ -120,8 +131,8 @@ export default function ContactPage() {
                   </dd>
                 </div>
                 <div>
-                  <dt>Office hours</dt>
-                  <dd>Monday to Friday, 8:30am &ndash; 5:00pm</dd>
+                  <dt>When to reach us</dt>
+                  <dd>Monday to Friday, 8:30am &ndash; 5:00pm (AEST)</dd>
                 </div>
                 <div>
                   <dt>Before you engage us</dt>

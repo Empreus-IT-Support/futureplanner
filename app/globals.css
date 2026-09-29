@@ -167,7 +167,16 @@ textarea:focus-visible,summary:focus-visible,[tabindex]:focus-visible{
 /* ==========================================================================
    TYPE
    ========================================================================== */
-h1,h2,h3,h4{font-family:var(--display);font-weight:600;line-height:1.1;color:var(--navy)}
+/* font-variant-ligatures / font-feature-settings: Playfair Display sets an fi
+   ligature that collides at display sizes, most visibly in "fits" in the hero
+   headline. Both properties are set because font-feature-settings is what
+   actually wins where the two overlap. This is deliberate and should not be
+   tidied away. */
+h1,h2,h3,h4{
+  font-family:var(--display);font-weight:600;line-height:1.1;color:var(--navy);
+  font-variant-ligatures:none;
+  font-feature-settings:"liga" 0,"dlig" 0;
+}
 h1{font-size:clamp(38px,5.8vw,66px);font-weight:700;letter-spacing:-1.4px}
 h2{font-size:clamp(28px,3.8vw,44px);font-weight:700;letter-spacing:-0.9px}
 h3{font-size:clamp(19px,2vw,23px);letter-spacing:-0.3px}
@@ -264,20 +273,16 @@ strong,b{font-weight:700}
 }
 .site-header.is-scrolled .header-inner{padding-block:12px}
 
+/* The wordmark carried a small gold dot after it, which read as a full stop.
+   Removed at the client's request; the mark now ends on the word. */
 .logo{
-  font-family:var(--display);font-size:21px;font-weight:700;color:var(--navy);
-  text-decoration:none;letter-spacing:-0.3px;white-space:nowrap;
-  display:inline-flex;align-items:baseline;gap:.32em;
+  font-family:var(--display);font-size:clamp(23px,2.2vw,27px);font-weight:700;
+  color:var(--navy);
+  text-decoration:none;letter-spacing:-0.4px;white-space:nowrap;
+  display:inline-flex;align-items:baseline;gap:.3em;
 }
 .logo span{color:var(--gold-text);transition:color var(--t-fast) ease}
 .logo:hover span{color:var(--navy)}
-/* The gold dot that trails the wordmark. */
-.logo::after{
-  content:'';width:5px;height:5px;border-radius:50%;background:var(--gold);
-  transform:translateY(-.55em);
-  transition:transform var(--t-med) var(--ease-out);
-}
-.logo:hover::after{transform:translateY(-.55em) scale(1.6)}
 
 .nav{display:flex;align-items:center;gap:clamp(12px,2vw,26px)}
 .nav a{
@@ -385,7 +390,8 @@ strong,b{font-weight:700}
 /* Sized in px, not ch: the headline is Playfair but inherits this from the
    body font, so a ch value re-flows the h1 whenever the body face changes. */
 .hero-copy{align-self:center;max-width:min(100%, 560px)}
-.hero h1{margin-bottom:4px}
+/* Item 7: a step smaller than the global h1, which stays as it is elsewhere. */
+.hero h1{font-size:clamp(34px,5vw,58px);margin-bottom:4px}
 .hero h1 em{font-style:normal;color:var(--gold);position:relative;white-space:nowrap}
 /* Gold underswash beneath the emphasised word. */
 .hero h1 em::after{
@@ -869,7 +875,12 @@ strong,b{font-weight:700}
   .licensee-strip strong{white-space:normal}
 }
 
-@media (max-width:640px){
+/* The inline nav hands over to the menu button at 880px rather than 640px.
+   Five items at this letter-spacing wrap onto a second line somewhere around
+   860px, which pushed the header out of line with the wordmark. Everything
+   below that is a tablet in portrait or a phone, where the menu button is the
+   better control anyway. The rest of the small-screen rules stay at 640px. */
+@media (max-width:880px){
   .nav{
     display:none;
     position:absolute;left:0;right:0;top:100%;
@@ -888,6 +899,9 @@ strong,b{font-weight:700}
   .nav-toggle{display:inline-flex}
   .header-inner{position:relative}
   .header-inner > .btn{display:none}
+}
+
+@media (max-width:640px){
   .licensee-strip p{text-align:left}
   .stats{grid-template-columns:1fr}
   .team-grid{grid-template-columns:1fr}
@@ -1275,8 +1289,13 @@ strong,b{font-weight:700}
 .hero h1 em::after{background:var(--gold-40)}
 .hero-copy > p{
   color:rgba(255,255,255,0.86);max-width:52ch;
-  font-size:clamp(16px,1.8vw,20px);line-height:1.6;margin:24px 0 34px;
+  font-size:clamp(16px,1.8vw,20px);line-height:1.6;margin:24px 0 0;
 }
+/* Two paragraphs now, so the gap between them is tighter than the gap down to
+   the buttons. Same size and colour for both: the second is supplied copy, not
+   a caption. */
+.hero-copy > p + p{margin-top:14px}
+.hero-copy > p:last-of-type{margin-bottom:34px}
 .hero-actions{gap:14px}
 
 /* Buttons on the photograph need their own treatment — the navy fill would
@@ -1317,3 +1336,108 @@ strong,b{font-weight:700}
   .hero-offices li{font-size:14px}
   .hero-actions .btn{flex:1 1 auto;justify-content:center}
 }
+
+/* ==========================================================================
+   TEAM — stacked profiles
+
+   Replaces the card grid. The supplied copy runs to several paragraphs a
+   person, which a three-across grid cannot hold. These rules come after the
+   originals and deliberately override them.
+   ========================================================================== */
+.team-list{display:grid;gap:clamp(40px,5vw,64px);max-width:none}
+.member{
+  display:grid;grid-template-columns:172px minmax(0,1fr);
+  gap:clamp(24px,4vw,44px);align-items:start;
+  text-align:left;padding:0;border:0;background:none;
+}
+.member:hover{transform:none;box-shadow:none;border-color:transparent;background:none}
+.member + .member{padding-top:clamp(40px,5vw,64px);border-top:1px solid var(--rule)}
+
+.member-aside{position:sticky;top:104px}
+.member-photo{
+  width:172px;max-width:none;aspect-ratio:4/5;margin:0;
+  border-radius:8px;overflow:hidden;
+}
+/* Initials, not a silhouette. The client asked for no placeholder person, and
+   this same frame takes the photograph when the batch arrives. */
+.member-photo--initials{
+  background:
+    radial-gradient(120% 120% at 30% 20%, var(--gold-10), transparent 60%),
+    linear-gradient(160deg, var(--white), var(--off-white));
+  border:1px solid var(--rule);
+  display:grid;place-items:center;
+}
+.member-photo--initials span{
+  font-family:var(--display);font-size:42px;font-weight:600;letter-spacing:1px;
+  color:var(--gold-text);
+}
+
+.member-body h3{font-size:clamp(21px,2.4vw,26px);margin-bottom:6px;letter-spacing:-0.4px}
+.member-body .role{
+  font-size:11.5px;letter-spacing:1.8px;text-transform:uppercase;
+  color:var(--gold-text);margin-bottom:18px;font-weight:600;
+}
+.member-body p{font-size:16px;line-height:1.72;color:var(--slate);margin-bottom:15px}
+
+.member-quals{margin-top:22px;padding-top:20px;border-top:1px solid var(--rule)}
+.member-quals h4{
+  font-family:var(--body);font-size:10px;font-weight:bold;letter-spacing:3px;
+  text-transform:uppercase;color:var(--gold-text);margin-bottom:12px;
+}
+.member-quals ul{list-style:none;display:grid;gap:7px}
+.member-quals li{
+  font-size:15px;color:var(--slate);line-height:1.5;
+  display:flex;gap:10px;
+}
+.member-quals li::before{
+  content:'';width:5px;height:5px;border-radius:50%;background:var(--gold);
+  flex:none;margin-top:8px;
+}
+
+.member-body .member-meta{
+  margin-top:20px;padding-top:16px;border-top:1px solid var(--rule);
+  font-size:14px;color:var(--grey-text);line-height:1.8;
+}
+
+@media (max-width:760px){
+  .member{grid-template-columns:1fr;gap:20px}
+  .member-aside{position:static}
+  .member-photo{width:132px}
+  .member-photo--initials span{font-size:34px}
+}
+
+/* ==========================================================================
+   SERVICES — RISK STATEMENT
+   Sits directly beneath the service card grid, above "What else we do".
+
+   Deliberately styled as ordinary body copy: full-strength --navy rather than
+   the softer --slate used for section intros, the same size as the rest of the
+   page, and never collapsed behind a disclosure. Risk has to be presented
+   alongside benefit, so this must not read as small print. If you are tempted
+   to shrink it, grey it, or tuck it into an accordion, don't.
+
+   The hairline above it is there to show it applies to the whole grid rather
+   than to whichever card happens to end nearest it.
+   ========================================================================== */
+.risk-note{
+  max-width:var(--measure);
+  margin:clamp(34px,4vw,48px) 0 0;
+  padding-top:clamp(22px,2.6vw,30px);
+  border-top:1px solid var(--rule);
+  font-size:16.5px;
+  line-height:1.65;
+  color:var(--navy);
+}
+
+/* ==========================================================================
+   CONTACT — GENERAL CONTACT TIMES
+   Sits above the office cards. The offices themselves are by appointment, so
+   this is the one place weekday times appear, and it is about reaching the
+   practice rather than about any address being open.
+   ========================================================================== */
+.contact-hours{
+  display:flex;align-items:center;gap:10px;
+  margin:0 0 clamp(26px,3vw,36px);
+  font-size:15.5px;font-weight:600;color:var(--slate);
+}
+.contact-hours svg{color:var(--gold-text);flex:none}

@@ -82,12 +82,13 @@ export default function StructuredData() {
       availableLanguage: 'en-AU',
     },
     knowsAbout: [
-      'Retirement and superannuation advice',
+      'Superannuation and retirement advice',
       'Investment advice',
       'Personal and business insurance',
       'Self-managed super funds',
       'Estate planning',
-      'Aged care financial advice',
+      'Cash flow and budgeting',
+      'Debt management',
     ],
     additionalProperty: {
       '@type': 'PropertyValue',

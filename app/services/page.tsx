@@ -3,13 +3,19 @@ import Link from 'next/link'
 
 import { IconArrow } from '@/components/Icons'
 import ServiceCards from '@/components/ServiceCards'
-import { exclusions, services } from '@/data/services'
+import {
+  exclusions,
+  investmentRisk,
+  services,
+  servicesIntro,
+  whatElseWeDo,
+} from '@/data/services'
 
 export const metadata: Metadata = {
   title: 'Services',
   description:
-    'Retirement and superannuation, investment advice, personal and business insurance, SMSFs, ' +
-    'estate planning and aged care advice from Future Planner.',
+    'Superannuation and retirement, investment advice, personal and business insurance, SMSFs, ' +
+    'estate planning, cash flow and debt management advice from Future Planner.',
   alternates: { canonical: '/services' },
 }
 
@@ -18,19 +24,36 @@ export default function ServicesPage() {
     <>
       <section className="section">
         <div className="wrap">
+          {/*
+            The intro paragraph is the advice-areas list moved down out of the
+            hero. It sits under the heading and above the cards, and the
+            property sentence in it is fixed wording — see data/services.ts.
+          */}
           <div className="section-head section-head--split" data-reveal>
             <p className="eyebrow">What we do</p>
             <h1>Services</h1>
             <hr className="rule-gold" />
-            <p className="lede">
-              These are the areas our advisers are authorised to provide advice in. Which of them
-              is relevant depends entirely on where you&rsquo;re up to — most first conversations
-              start with one and end up touching two or three.
-            </p>
+            <p className="lede">{servicesIntro}</p>
           </div>
 
           <ServiceCards items={services} variant="detail" headingLevel={2} />
 
+          {/*
+            Risk statement. Sits under the whole grid rather than on one card,
+            because it applies to superannuation as much as to investments.
+            Full-strength body text on purpose: it is not small print.
+          */}
+          <p className="risk-note" data-reveal>
+            {investmentRisk}
+          </p>
+
+          <div className="section-head section-head--split section-head--spaced" data-reveal>
+            <h2>What else we do</h2>
+            <hr className="rule-gold" />
+            <p>{whatElseWeDo}</p>
+          </div>
+
+          {/* Order matters: the exclusions follow "What else we do", never precede it. */}
           <div className="section-head section-head--split section-head--spaced" data-reveal>
             <h2>What we don&rsquo;t do</h2>
             <hr className="rule-gold" />

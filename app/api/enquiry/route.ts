@@ -237,7 +237,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true })
   }
 
-  if (!name || !email || !message) {
+  // Phone joined the required set at the client's request. Checked here as
+  // well as in the browser, because the browser check is a convenience and
+  // this is the one that actually holds.
+  if (!name || !email || !phone || !message) {
     return NextResponse.json({ error: 'Please complete the required fields.' }, { status: 400 })
   }
   if (!EMAIL.test(email)) {
@@ -258,7 +261,7 @@ export async function POST(request: Request) {
   const lines = [
     `Name: ${name}`,
     `Email: ${email}`,
-    ...(phone ? [`Phone: ${phone}`] : []),
+    `Phone: ${phone}`,
     `Preferred office: ${office}`,
     '',
     'Message:',

@@ -44,7 +44,13 @@ export type Office = {
   short: string
   tag: string
   lines: string[]
-  hours: string
+  /**
+   * Every office is by appointment. None of the three is staffed across the
+   * week, so a Monday-to-Friday opening time against an address would be
+   * wrong — Mount Isa especially, where no adviser is permanently based.
+   * General contact times are stated once, site-wide, in contactHours.
+   */
+  availability: string
   /** Rendered under the address. Either an adviser link or a plain note. */
   adviser?: { name: string }
   note?: string
@@ -57,7 +63,7 @@ export type Office = {
 export const offices: Office[] = [
   {
     id: 'gold-coast',
-    name: 'Gold Coast Financial Planner',
+    name: 'Gold Coast',
     short: 'Gold Coast',
     tag: 'Head office',
     lines: [
@@ -66,16 +72,16 @@ export const offices: Office[] = [
       '9 Lawson Street, Southport QLD 4215',
       'Postal: PO Box 929, Southport BC QLD 4215',
     ],
-    hours: 'Monday to Friday, 8:30am – 5:00pm (AEST)',
+    availability: 'By appointment',
     adviser: { name: 'Andrew Koulouris' },
   },
   {
     id: 'canberra',
-    name: 'Canberra Financial Planner',
+    name: 'Canberra',
     short: 'Canberra',
     tag: 'Office',
     lines: ['7/146 Scollay Street', 'Greenway ACT 2900'],
-    hours: 'Monday to Friday, 8:30am – 5:00pm (Canberra time, AEST/AEDT)',
+    availability: 'By appointment',
     adviser: { name: 'Graeme Davy' },
   },
   {
@@ -84,12 +90,21 @@ export const offices: Office[] = [
     short: 'Mount Isa',
     tag: 'Office',
     lines: ['Isa House, Suite 14', '118 Camooweal Street', 'Mount Isa QLD 4825'],
-    hours: 'Monday to Friday, 8:30am – 5:00pm (AEST)',
+    availability: 'By appointment',
     note:
       'Our Client Liaison Officer is based here. No adviser is permanently based in ' +
       'Mount Isa — advice is provided by video, or in person when an adviser is visiting.',
   },
 ]
+
+/**
+ * When someone can actually reach the practice by phone or email. This is a
+ * general contact time for the firm, not an opening time for any address —
+ * the offices themselves are by appointment. Stated once here so the two can
+ * never drift apart.
+ */
+export const contactHours =
+  'Contact us by phone or email Monday to Friday, 8:30am – 5:00pm (AEST)'
 
 /** Short address lines used in the footer. */
 export const footerOffices = [
@@ -176,7 +191,8 @@ export const RESTRICTED_WORDS = [
  * Figures for the home page stats band.
  *
  * Every one of these restates something already stated elsewhere on the site —
- * three offices, six people, Graeme advising since 2002, and a first
+ * three offices, six people, the earliest of the two advisers starting in 2001,
+ * and a first
  * conversation at no cost. Nothing here is a new claim, and nothing here is a
  * performance or outcome figure. Do not add one: past performance claims and
  * anything implying a result belong nowhere on this site.
@@ -205,7 +221,10 @@ export const stats: Stat[] = [
     sub: 'Advisers and support staff',
   },
   {
-    value: 2002,
+    // 2001 is Andrew, who started a year before Graeme. The About section now
+    // gives both dates, so this has to be the earlier of the two or the band
+    // contradicts the paragraph a screen below it.
+    value: 2001,
     from: 1988,
     label: 'Advising since',
     sub: 'Where the experience behind the firm starts',

@@ -58,34 +58,48 @@ export default function HomePage() {
           </div>
 
           <div className="about-grid">
+            {/*
+              Client-supplied replacement for the whole section, given as four
+              finished paragraphs. It was explicitly not to be edited sentence
+              by sentence, so please replace it wholesale if it changes again.
+
+              Two things to hold to here. The point about how long the team has
+              worked together is made once, by "who have worked together
+              before" in the last paragraph, and must not be restated as a
+              separate sentence. And the service area is Australia only:
+              nothing on this site may suggest the firm advises clients living
+              overseas.
+            */}
             <div className="about-copy" data-reveal="left">
               <p>
-                Future Planner was established in May 2026. The firm is new — the advice behind it
-                isn&rsquo;t. Graeme Davy has been advising clients since 2002, across large
+                Future Planner was established in May 2026, but we didn&rsquo;t start from
+                scratch. Graeme Davy has been advising clients since 2002, across large
                 institutions, a specialist planning firm and one of Australia&rsquo;s biggest
-                industry super funds, and Andrew Koulouris came to financial planning from an
-                accounting background.
+                industry super funds, and Andrew Koulouris has been advising since 2001,
+                including fifteen years running his own practice on the Gold Coast.
               </p>
               <p>
                 We built the firm to be broad rather than narrow. Financial advice tends to find
                 people who already have substantial assets behind them, and plenty of people who
                 would benefit from a plan don&rsquo;t fit that description. We work with clients at
-                different stages and of different means — someone sorting out their super properly
-                for the first time, a business owner working out what insurance actually needs to
-                cover, a couple trying to picture what retirement looks like in numbers rather than
-                in vague terms.
+                different stages and of different means &mdash; someone sorting out their super
+                properly for the first time, a business owner working out what insurance actually
+                needs to cover, a couple trying to picture what retirement looks like in numbers
+                rather than in vague terms.
               </p>
               <p>
                 We have offices at Southport on the Gold Coast, in Canberra, and in Mount Isa, and
-                we meet clients elsewhere in Australia by video. Distance shouldn&rsquo;t decide
-                whether someone can get advice, and for a lot of the country it still does.
+                we work with clients right across Australia. If you&rsquo;re not near one of our
+                offices, a video meeting works just as well. All you need is an internet
+                connection.
               </p>
               <p>
                 We intend to grow, and we&rsquo;d rather be straightforward about what that means.
-                We&rsquo;re a small firm at the start of things. What we can offer now is the time
-                to understand a situation properly before recommending anything, advice explained
-                in language you can repeat to someone else, and a clear answer when the honest
-                answer is that you don&rsquo;t need to change what you&rsquo;re doing.
+                We&rsquo;re new, but we&rsquo;re not starting small &mdash; two advisers and a full
+                support team from day one who have worked together before. What we can offer now is
+                the time to understand a situation properly before recommending anything, advice
+                explained in language you can repeat to someone else, and a clear answer when the
+                honest answer is that you don&rsquo;t need to change what you&rsquo;re doing.
               </p>
             </div>
 

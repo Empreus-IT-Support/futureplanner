@@ -25,6 +25,7 @@ function request(body: Record<string, unknown> = {}) {
     body: JSON.stringify({
       name: 'Test Person',
       email: 'enquirer@example.com',
+      phone: '0400 000 000',
       office: 'Canberra',
       message: 'Please get in touch.',
       company: '',
@@ -135,6 +136,7 @@ describe('rate limiting', () => {
         body: JSON.stringify({
           name: 'Test',
           email: 'a@example.com',
+          phone: '0400 000 000',
           office: 'Canberra',
           message: 'hello',
           company: '',

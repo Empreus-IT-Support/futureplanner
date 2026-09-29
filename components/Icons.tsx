@@ -71,10 +71,23 @@ export function IconEstate({ size = 24, className }: Props) {
   )
 }
 
-export function IconAgedCare({ size = 24, className }: Props) {
+export function IconCashFlow({ size = 24, className }: Props) {
   return (
     <svg {...base(size)} className={className}>
-      <path d="M12 20.5s-7-4.4-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11.5c0 4.6-7 9-7 9z" />
+      <rect x="3" y="6" width="18" height="12" rx="2" />
+      <path d="M3 10.5h18" />
+      <path d="M7 14.5h3.5" />
+    </svg>
+  )
+}
+
+export function IconDebt({ size = 24, className }: Props) {
+  return (
+    <svg {...base(size)} className={className}>
+      <path d="M4 20h16" />
+      <path d="M7.5 20V9" />
+      <path d="M12 20v-6" />
+      <path d="M16.5 20v-3" />
     </svg>
   )
 }
@@ -144,10 +157,11 @@ export function IconClock({ size = 20, className }: Props) {
 
 /** Service id to icon. Falls back to the document mark for anything new. */
 export const serviceIcons: Record<string, (p: Props) => React.JSX.Element> = {
-  retirement: IconRetirement,
+  'superannuation-retirement': IconRetirement,
   investment: IconInvestment,
   insurance: IconInsurance,
   smsf: IconSmsf,
   'estate-planning': IconEstate,
-  'aged-care': IconAgedCare,
+  'cash-flow': IconCashFlow,
+  'debt-management': IconDebt,
 }
