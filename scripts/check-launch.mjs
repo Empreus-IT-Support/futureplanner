@@ -55,7 +55,12 @@ console.log('\nEnquiry form')
 console.log('  [manual]  ATLAS_SENDING_KEY set in the Vercel project (not checkable from here)')
 console.log('  [manual]  ENQUIRY_TO is on the Send only to allowlist in Atlas')
 console.log('  [manual]  Atlas Auto-reply is ON for the key, with the FSG link and advice warning')
-console.log('  [manual]  SPF, DKIM and DMARC on futureplanner.au')
+// Checked against public DNS on 29 September 2026: SPF has the three
+// includes, both azurecomm DKIM selectors resolve, and DMARC is p=reject.
+// Left on the list as a recheck rather than a to-do, because the zone is at
+// Synergy Wholesale and can change without this repo knowing.
+console.log('  [recheck] SPF, DKIM and DMARC on futureplanner.au (all three verified 2026-09-29)')
+console.log('  [manual]  DMARC sp= is none. Set sp=reject so subdomains are covered too')
 console.log('  [manual]  delivery tested to a Gmail and an Outlook address')
 
 // 5. Search indexing.

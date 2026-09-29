@@ -85,7 +85,7 @@ export default function Hero() {
           information twice in one viewport and has gone. Restore it from git
           if the client would rather have the list than the sentence.
         */}
-        <div className="hero-foot hero-foot--cue-only">
+        <div className="hero-foot">
           <button
             type="button"
             className="scroll-cue"
