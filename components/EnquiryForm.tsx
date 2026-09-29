@@ -12,6 +12,9 @@ type Status = { kind: 'idle' | 'sending' } | { kind: 'ok' } | { kind: 'error'; m
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const MAX_MESSAGE = 5000
 
+/** Form order, so focus lands on the first field that failed, not the last. */
+const FIELD_ORDER = ['name', 'email', 'phone', 'message'] as const
+
 export default function EnquiryForm() {
   const [errors, setErrors] = useState<Errors>({})
   const [status, setStatus] = useState<Status>({ kind: 'idle' })
@@ -63,8 +66,14 @@ export default function EnquiryForm() {
     if (!payload.message) next.message = 'Please tell us briefly what you are after.'
 
     setErrors(next)
-    if (Object.keys(next).length > 0) {
-      form.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus()
+    const firstInvalid = FIELD_ORDER.find((field) => next[field])
+    if (firstInvalid) {
+      // Focus by id, not by [aria-invalid="true"]. setErrors is batched and
+      // does not flush until this handler returns, so at this point no input
+      // carries aria-invalid yet and an attribute selector matches nothing.
+      // Submitting an incomplete form would otherwise leave focus on the send
+      // button, with the error announced nowhere near it.
+      form.querySelector<HTMLElement>(`#${firstInvalid}`)?.focus()
       return
     }
 
