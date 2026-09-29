@@ -44,9 +44,12 @@ export default function SiteFooter() {
 
           <div className="footer-links">
             <h2>Site</h2>
-            <Link href="/#about">About</Link>
+            {/* Same order as the header nav, which follows the order the home
+                page scrolls in. If one changes, change both. */}
             <Link href="/services">Services</Link>
+            <Link href="/#about">About</Link>
             <Link href="/#team">Our team</Link>
+            <Link href="/#documents">Documents</Link>
             <Link href="/contact">Contact</Link>
           </div>
         </div>
