@@ -11,6 +11,7 @@ import { site } from '@/data/site'
 import { indexable } from './robots'
 
 import './globals.css'
+import { Analytics } from "@vercel/analytics/react";
 
 /**
  * Both faces are self-hosted by next/font rather than fetched from the Google
@@ -91,6 +92,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AdviceWarning />
 
         <SiteFooter />
+        <Analytics />
       </body>
     </html>
   )
