@@ -31,7 +31,7 @@ const byId = (id: string) => {
 
 const allServiceCopy = services.map((s) => `${s.title} ${s.summary} ${s.detail}`).join(' ')
 
-describe('item 15 — the investment risk statement', () => {
+describe('round one, item 15 — the investment risk statement', () => {
   it('is the confirmed wording, unchanged', () => {
     expect(investmentRisk).toBe(
       'Investment returns are not guaranteed. The value of investments can fall as well as ' +
@@ -68,7 +68,7 @@ describe('item 15 — the investment risk statement', () => {
   })
 })
 
-describe('items 19 and 20 — section order', () => {
+describe('round one, items 19 and 20 — section order', () => {
   it('puts "What else we do" before the exclusions', () => {
     const html = renderToStaticMarkup(<ServicesPage />)
     expect(html.indexOf(whatElseWeDo)).toBeLessThan(html.indexOf(exclusions))
@@ -81,7 +81,7 @@ describe('items 19 and 20 — section order', () => {
   })
 })
 
-describe('item 11 — the services intro', () => {
+describe('round one, item 11 — the services intro', () => {
   it('carries the property sentence exactly as supplied', () => {
     // AVALONFS does not advise on property. Shortening this to "property
     // included" or similar would misstate the licence.
@@ -98,7 +98,7 @@ describe('item 11 — the services intro', () => {
   })
 })
 
-describe('items 12 to 18 — the service cards', () => {
+describe('round one, items 12 to 18 — the service cards', () => {
   it('leads with superannuation', () => {
     expect(services[0].title).toBe('Superannuation and retirement')
   })
@@ -144,13 +144,16 @@ describe('items 12 to 18 — the service cards', () => {
   })
 })
 
-describe('items 8 and 9 — the supplied hero and About copy', () => {
+describe('rounds one and two — the supplied hero and About copy', () => {
   const html = renderToStaticMarkup(<HomePage />)
 
   it('uses the supplied hero paragraphs', () => {
     expect(html).toContain(
-      'We provide personal financial advice for individuals, families, professionals and ' +
-        'business owners',
+      'We help people understand their circumstances and make decisions with confidence.',
+    )
+    expect(html).toContain(
+      'Personal financial advice for individuals, families, professionals and business ' +
+        'owners',
     )
     expect(html).toContain(
       'Offices on the Gold Coast, in Canberra and Mount Isa, and video meetings anywhere in ' +
@@ -166,6 +169,7 @@ describe('items 8 and 9 — the supplied hero and About copy', () => {
   it('uses the supplied About paragraphs', () => {
     expect(html).toContain('Future Planner was established in May 2026, but we didn’t start from')
     expect(html).toContain('We built the firm to be broad rather than narrow.')
+    expect(html).toContain('what personal insurance is required to protect their wealth')
     expect(html).toContain('we work with clients right across Australia')
   })
 
@@ -193,7 +197,7 @@ describe('the service area is Australia only', () => {
   })
 })
 
-describe('items 23 to 25 — the offices', () => {
+describe('round one, items 23 to 25 — the offices', () => {
   it('names the offices without "Financial Planner"', () => {
     expect(offices.map((o) => o.name)).toEqual(['Gold Coast', 'Canberra', 'Mount Isa'])
   })
@@ -211,5 +215,84 @@ describe('items 23 to 25 — the offices', () => {
     expect(contactHours).toBe(
       'Contact us by phone or email Monday to Friday, 8:30am – 5:00pm (AEST)',
     )
+  })
+})
+
+/**
+ * Second review round, 2 October 2026. Same reasoning as above: each of these
+ * reverses cleanly and silently, and several carry a reason the wording does
+ * not show on its own.
+ */
+describe('round two, items 1 and 2 — the insurance card', () => {
+  it('is headed Personal insurance, with no mention of business insurance', () => {
+    // The firm does not provide business insurance, and the old heading could
+    // be read as though it did.
+    expect(byId('insurance').title).toBe('Personal insurance')
+    for (const s of services) {
+      expect(s.title.toLowerCase()).not.toContain('business insurance')
+    }
+  })
+
+  it('still covers business owners, in the card text rather than the heading', () => {
+    expect(byId('insurance').detail).toContain('business expense, key person and')
+    expect(byId('insurance').detail).toContain('for business owners')
+  })
+
+  it('says funding buy-sell agreements rather than shareholder cover', () => {
+    // The same thing, named as what it actually is.
+    expect(byId('insurance').detail).toContain('funding buy-sell agreements')
+    expect(allServiceCopy.toLowerCase()).not.toContain('shareholder cover')
+  })
+})
+
+describe('round two, item 3 — the SMSF card', () => {
+  it('offers setting one up, running one, or both', () => {
+    // "and" alone read as though both were required.
+    for (const copy of [byId('smsf').summary, byId('smsf').detail]) {
+      expect(copy).toContain('and/or on running one you already have')
+    }
+  })
+})
+
+describe('round two, item 4 — the debt management card', () => {
+  it('drops the mortgage broker clause', () => {
+    // Already said in "What else we do", so repeating it here duplicated it.
+    expect(byId('debt-management').detail).not.toContain('mortgage broker')
+    expect(whatElseWeDo).toContain('mortgage broker')
+  })
+
+  it('keeps the no-credit-advice sentence and ends on it', () => {
+    // Only half the sentence came out. A card headed Debt management has to
+    // say plainly that no finance is being arranged, or the heading reads as
+    // an offer to arrange it. Removing this with the broker clause would be
+    // the easy mistake.
+    expect(byId('debt-management').detail.trimEnd()).toMatch(
+      /We don’t arrange loans or provide credit advice\.$/,
+    )
+  })
+})
+
+describe('round two, item 7 — the closing line of the exclusions', () => {
+  it('is the shorter referral sentence', () => {
+    expect(exclusions.trimEnd()).toMatch(
+      /If you need the services of another professional, we’ll tell you\.$/,
+    )
+    expect(exclusions).not.toContain('stretching to cover it')
+  })
+
+  it('leaves the list of excluded services untouched', () => {
+    for (const excluded of [
+      'crypto currencies',
+      'currency or foreign exchange trading',
+      'derivatives',
+      'tax',
+      'accounting',
+      'legal matters',
+      'general insurance',
+      'real estate or property',
+      'lending other than margin loans and gearing',
+    ]) {
+      expect(exclusions).toContain(excluded)
+    }
   })
 })
