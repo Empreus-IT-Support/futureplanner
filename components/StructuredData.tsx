@@ -84,7 +84,7 @@ export default function StructuredData() {
     knowsAbout: [
       'Superannuation and retirement advice',
       'Investment advice',
-      'Personal and business insurance',
+      'Personal insurance',
       'Self-managed super funds',
       'Estate planning',
       'Cash flow and budgeting',

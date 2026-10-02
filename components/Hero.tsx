@@ -54,10 +54,9 @@ export default function Hero() {
             Advice that fits the life you&rsquo;re actually <em>building</em>.
           </h1>
           <p data-reveal style={{ '--reveal-delay': '110ms' } as React.CSSProperties}>
-            We provide personal financial advice for individuals, families, professionals and
-            business owners &mdash; whether that&rsquo;s a comfortable retirement, funding your
-            children&rsquo;s education, getting debt to a manageable level, or building assets
-            that fit your plans.
+            We help people understand their circumstances and make decisions with confidence.
+            Personal financial advice for individuals, families, professionals and business
+            owners &mdash; building wealth, protecting it, and planning what comes next.
           </p>
           <p data-reveal style={{ '--reveal-delay': '170ms' } as React.CSSProperties}>
             Offices on the Gold Coast, in Canberra and Mount Isa, and video meetings anywhere in

@@ -46,23 +46,24 @@ export const services: Service[] = [
   },
   {
     id: 'insurance',
-    title: 'Personal & business insurance',
+    title: 'Personal insurance',
     summary:
       'Life, TPD, trauma and income protection — working out what you need covered, and what ' +
       'you can stop paying for.',
     detail:
       'Life, TPD, trauma and income protection, plus business expense, key person and ' +
-      'shareholder cover. Working out what genuinely needs protecting, what it costs, and ' +
-      'what you can stop paying for.',
+      'funding buy-sell agreements for business owners. Working out what genuinely needs ' +
+      'protecting, what it costs, and what you can stop paying for.',
     featured: true,
   },
   {
     id: 'smsf',
     title: 'Self-managed super funds',
     summary:
-      'Advice on whether an SMSF suits your circumstances, and on running one you already have.',
+      'Advice on whether an SMSF suits your circumstances, and/or on running one you already ' +
+      'have.',
     detail:
-      'Advice on whether an SMSF suits your circumstances, and on running one you already ' +
+      'Advice on whether an SMSF suits your circumstances, and/or on running one you already ' +
       'have. An SMSF brings real responsibilities as a trustee, and it doesn’t suit ' +
       'everyone — part of this conversation is establishing whether it suits you.',
     featured: false,
@@ -107,8 +108,7 @@ export const services: Service[] = [
     detail:
       'Working out which debts to tackle in what order, and how repayments sit alongside ' +
       'everything else you are trying to do. We can model the effect of different repayment ' +
-      'approaches over time. We don’t arrange loans or provide credit advice — where ' +
-      'borrowing is involved we work alongside your mortgage broker.',
+      'approaches over time. We don’t arrange loans or provide credit advice.',
     featured: false,
   },
 ]
@@ -159,5 +159,5 @@ export const whatElseWeDo =
 export const exclusions =
   'AVALONFS does not provide advice on crypto currencies, currency or foreign exchange ' +
   'trading, derivatives, tax, accounting, legal matters, general insurance, real estate or ' +
-  'property, or lending other than margin loans and gearing. If you need one of those, ' +
-  'we’ll tell you plainly rather than stretching to cover it.'
+  'property, or lending other than margin loans and gearing. If you need the services of ' +
+  'another professional, we’ll tell you.'

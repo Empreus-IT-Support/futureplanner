@@ -14,7 +14,7 @@ import {
 export const metadata: Metadata = {
   title: 'Services',
   description:
-    'Superannuation and retirement, investment advice, personal and business insurance, SMSFs, ' +
+    'Superannuation and retirement, investment advice, personal insurance, SMSFs, ' +
     'estate planning, cash flow and debt management advice from Future Planner.',
   alternates: { canonical: '/services' },
 }

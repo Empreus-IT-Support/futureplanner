@@ -83,9 +83,9 @@ export default function HomePage() {
                 people who already have substantial assets behind them, and plenty of people who
                 would benefit from a plan don&rsquo;t fit that description. We work with clients at
                 different stages and of different means &mdash; someone sorting out their super
-                properly for the first time, a business owner working out what insurance actually
-                needs to cover, a couple trying to picture what retirement looks like in numbers
-                rather than in vague terms.
+                properly for the first time, a business owner working out what personal insurance
+                is required to protect their wealth, a couple trying to picture what retirement
+                looks like in numbers rather than in vague terms.
               </p>
               <p>
                 We have offices at Southport on the Gold Coast, in Canberra, and in Mount Isa, and
