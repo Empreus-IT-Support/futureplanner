@@ -89,7 +89,7 @@ export const offices: Office[] = [
     name: 'Mount Isa',
     short: 'Mount Isa',
     tag: 'Office',
-    lines: ['Isa House, Suite 14', '118 Camooweal Street', 'Mount Isa QLD 4825'],
+    lines: ['Isa House, Suite 14', '119 Camooweal Street', 'Mount Isa QLD 4825'],
     availability: 'By appointment',
     note:
       'Our Client Liaison Officer is based here. No adviser is permanently based in ' +
@@ -113,7 +113,7 @@ export const footerOffices = [
     address: 'Suite 30701, Level 7, Southport Central Tower 3, 9 Lawson Street, Southport QLD 4215',
   },
   { label: 'Canberra', address: '7/146 Scollay Street, Greenway ACT 2900' },
-  { label: 'Mount Isa', address: 'Isa House, Suite 14, 118 Camooweal Street, Mount Isa QLD 4825' },
+  { label: 'Mount Isa', address: 'Isa House, Suite 14, 119 Camooweal Street, Mount Isa QLD 4825' },
 ]
 
 /** Options offered in the enquiry form's office select. */
